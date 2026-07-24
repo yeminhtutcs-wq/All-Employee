@@ -68,7 +68,7 @@
 
         <div class="info-box">
             <div class="info-row">
-                <span>လုပ်ရက်ပေါင်း (Sunday မပါ):</span>
+                <span id="daysLabel">လုပ်ရက်ပေါင်း (Sunday ပါသည်):</span>
                 <div><b id="daysCount">0</b> ရက်</div>
             </div>
             <div class="info-row">
@@ -184,18 +184,18 @@
 
         if (type === 'daily') {
             document.getElementById('dailyPeriodBox').style.display = 'block';
+            document.getElementById('daysLabel').innerText = 'လုပ်ရက်ပေါင်း (Sunday မပါ):';
             if (period === 'p15') {
-                // နေ့စား ၁၅ ရက်ထုတ်ဆိုရင် ရက်မှန်ကြေး မရပါ
                 document.getElementById('attendanceContainer').style.display = 'none';
                 document.getElementById('attendanceDisplayBox').style.display = 'none';
             } else {
-                // နေ့စား လကုန်ထုတ်ဆိုရင် ရက်မှန်ကြေး ရွေးလို့ရမည်
                 document.getElementById('attendanceContainer').style.display = 'block';
                 document.getElementById('attendanceDisplayBox').style.display = 'block';
             }
         } else {
-            // လခစား
+            // လခစား (Sunday ပါသည်)
             document.getElementById('dailyPeriodBox').style.display = 'none';
+            document.getElementById('daysLabel').innerText = 'လုပ်ရက်ပေါင်း (Sunday ပါသည်):';
             document.getElementById('attendanceContainer').style.display = 'block';
             document.getElementById('attendanceDisplayBox').style.display = 'block';
         }
@@ -231,8 +231,8 @@
             let startDate = new Date(prevYear, prevMonth - 1, 21);
             let endDate = new Date(year, m - 1, 20);
 
-            let diffTime = Math.abs(endDate - startDate);
-            days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            // လခစားအတွက် Sunday ပါဝင်ပြီး ရက်ပေါင်းတွက်ခြင်း
+            days = countWorkingDays(startDate, endDate, false);
             baseSalary = days * dailyRate;
         } else {
             let period = document.getElementById('payPeriod').value;
@@ -249,7 +249,7 @@
                 endDate = new Date(year, m - 1, 20);
             }
 
-            // Sunday နှုတ်ပြီး ရက်တွက်ခြင်း
+            // နေ့စားအတွက် Sunday နှုတ်ပြီး ရက်တွက်ခြင်း
             days = countWorkingDays(startDate, endDate, true);
             baseSalary = days * dailyRate;
         }
@@ -334,3 +334,4 @@
 
 </body>
 </html>
+
