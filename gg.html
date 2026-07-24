@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ဝင်ငွေနှင့် ဘတ်ဂျက် တွက်စက်</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f6f9; padding: 15px; margin: 0; }
+        .card { background: white; padding: 20px; border-radius: 12px; max-width: 420px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; margin-top: 0; font-size: 20px; }
+        label { font-weight: bold; color: #555; display: block; margin-top: 12px; font-size: 14px; }
+        select, input { width: 100%; padding: 10px; font-size: 15px; margin-top: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; font-size: 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .btn-back { background: #6c757d; margin-top: 10px; }
+        .info-box { background: #e9ecef; padding: 12px; border-radius: 6px; margin-top: 10px; font-size: 14px; color: #495057; }
+        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .sub-mmk { font-size: 12px; color: #6c757d; text-align: right; margin-top: -2px; }
+        .total-header { background: #007bff; color: white; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; }
+        .total-header h3 { margin: 0; font-size: 18px; }
+        .total-header p { margin: 4px 0 0; font-size: 13px; opacity: 0.9; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .title { font-size: 14px; color: #333; }
+        .amt-box { text-align: right; }
+        .amt-thb { font-weight: bold; color: #28a745; font-size: 15px; }
+        .amt-mmk { font-size: 11px; color: #6c757d; margin-top: 2px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <!-- စာမျက်နှာ (၁) -->
+    <div id="page1">
+        <h2>၁။ လစာနှင့် OT တွက်ချက်ရန်</h2>
+        
+        <label for="empType">ဝန်ထမ်း အမျိုးအစား ရွေးပါ:</label>
+        <select id="empType" onchange="toggleEmpType()">
+            <option value="monthly">လခစား (လစဉ် ၂၀ ရက်နေ့အထိ)</option>
+            <option value="daily">နေ့စား (၁၅ ရက်နေ့ / လကုန်ထုတ်)</option>
+        </select>
+
+        <label for="monthSelect">လ ရွေးချယ်ပါ (၂၀၂၆):</label>
+        <select id="monthSelect" onchange="calculateSalary()">
+            <option value="1">ဇန်နဝါရီ</option>
+            <option value="2">ဖေဖော်ဝါရီ</option>
+            <option value="3">မတ်</option>
+            <option value="4">ဧပြီ</option>
+            <option value="5">မေ</option>
+            <option value="6">ဇွန်</option>
+            <option value="7" selected>ဇူလိုင်</option>
+            <option value="8">ဩဂုတ်</option>
+            <option value="9">စက်တင်ဘာ</option>
+            <option value="10">အောက်တိုဘာ</option>
+            <option value="11">နိုဝင်ဘာ</option>
+            <option value="12">ဒီဇင်ဘာ</option>
+        </select>
+
+        <!-- နေ့စား သီးသန့် ရွေးချယ်ရန် -->
+        <div id="dailyPeriodBox" style="display:none;">
+            <label for="payPeriod">နေ့စား ထုတ်ရက် ရွေးပါ:</label>
+            <select id="payPeriod" onchange="calculateSalary()">
+                <option value="p15">၁၅ ရက်နေ့ထုတ် (ပြီးခဲ့သည့်လ ၂၁ မှ ဒီလ ၅ ရက်ထိ)</option>
+                <option value="pend">လကုန်ထုတ် (ဒီလ ၆ ရက် မှ ဒီလ ၂၀ ရက်ထိ)</option>
+            </select>
+        </div>
+
+        <label for="dailyRate">တစ်ရက် လုပ်အားခ (ဘတ်):</label>
+        <input type="number" id="dailyRate" value="400" oninput="calculateSalary()">
+
+        <div class="info-box">
+            <div class="info-row">
+                <span>လုပ်ရက်ပေါင်း (Sunday မပါ):</span>
+                <div><b id="daysCount">0</b> ရက်</div>
+            </div>
+            <div class="info-row">
+                <span>လုပ်အားခ စုစုပေါင်း:</span>
+                <div><b id="baseSalary">0</b> ฿</div>
+            </div>
+            <div class="sub-mmk" id="baseSalaryMmk">(0 ကျပ်)</div>
+        </div>
+
+        <!-- လခစား အခွန် 5% -->
+        <div id="taxBox" class="info-box" style="background:#fff3cd; color:#856404;">
+            <div class="info-row">
+                <span>လစာ အခွန် (5% ဖြတ်တောက်):</span>
+                <div>-<b id="taxAmount">0</b> ฿</div>
+            </div>
+            <div class="sub-mmk" id="taxMmk" style="color:#856404;">(-0 ကျပ်)</div>
+        </div>
+
+        <label for="otHours">OT နာရီပေါင်း:</label>
+        <input type="number" id="otHours" placeholder="ဥပမာ - 20" value="0" oninput="calculateSalary()">
+
+        <div class="info-box">
+            <div class="info-row">
+                <span>OT ၁ နာရီနှုန်း (1.5 ဆ):</span>
+                <div><b id="otRateDisplay">75</b> ฿/hr</div>
+            </div>
+            <div class="info-row">
+                <span>OT ကြေး စုစုပေါင်း:</span>
+                <div><b id="otPay">0</b> ฿</div>
+            </div>
+            <div class="sub-mmk" id="otPayMmk">(0 ကျပ်)</div>
+            
+            <div id="attendanceBox">
+                <hr style="border: 0; border-top: 1px solid #d1d5db; margin: 8px 0;">
+                <div class="info-row">
+                    <span>ရက်မှန်ကြေး:</span>
+                    <div><b>400</b> ฿</div>
+                </div>
+                <div class="sub-mmk" id="attendanceMmk">(0 ကျပ်)</div>
+            </div>
+        </div>
+
+        <div class="info-box" style="background:#e8f5e9;">
+            <div class="info-row" style="font-size:16px; color:#2e7d32;">
+                <span>လက်ခံရရှိမည့် စုစုပေါင်း:</span>
+                <div><b id="totalIncomeP1">0</b> ฿</div>
+            </div>
+            <div class="sub-mmk" id="totalIncomeP1Mmk" style="color:#2e7d32; font-weight:bold;">(0 ကျပ်)</div>
+        </div>
+
+        <button onclick="goToPage2()">Next (ဒုတိယစာမျက်နှာသို့) ➔</button>
+    </div>
+
+    <!-- စာမျက်နှာ (၂) -->
+    <div id="page2" style="display:none;">
+        <h2>၂။ ဝင်ငွေ ခွဲဝေမှု စာရင်း</h2>
+
+        <div class="total-header">
+            <h3 id="totalHeaderThb">စုစုပေါင်း: 0 ฿</h3>
+            <p id="totalHeaderMmk">(0 ကျပ်)</p>
+        </div>
+
+        <div class="row">
+            <span class="title">အထွေထွေစရိတ် (60%)</span>
+            <div class="amt-box">
+                <div class="amt-thb" id="exp-thb">0 ฿</div>
+                <div class="amt-mmk" id="exp-mmk">(0 ကျပ်)</div>
+            </div>
+        </div>
+        <div class="row">
+            <span class="title">အရေးပေါ်သုံးငွေ (10%)</span>
+            <div class="amt-box">
+                <div class="amt-thb" id="emerg-thb">0 ฿</div>
+                <div class="amt-mmk" id="emerg-mmk">(0 ကျပ်)</div>
+            </div>
+        </div>
+        <div class="row">
+            <span class="title">စုငွေ (20%)</span>
+            <div class="amt-box">
+                <div class="amt-thb" id="save-thb">0 ฿</div>
+                <div class="amt-mmk" id="save-mmk">(0 ကျပ်)</div>
+            </div>
+        </div>
+        <div class="row">
+            <span class="title">အပိုအလိုငွေ (10%)</span>
+            <div class="amt-box">
+                <div class="amt-thb" id="extra-thb">0 ฿</div>
+                <div class="amt-mmk" id="extra-mmk">(0 ကျပ်)</div>
+            </div>
+        </div>
+
+        <button class="btn-back" onclick="goToPage1()">⬅ Back (ရှေ့သို့ပြန်သွားရန်)</button>
+    </div>
+</div>
+
+<script>
+    let grandTotalThb = 0;
+    const rate = 100000 / 780; // 100,000 MMK = 780 THB
+    const attendanceBonus = 400; // ရက်မှန်ကြေး 400 ฿
+
+    function toggleEmpType() {
+        let type = document.getElementById('empType').value;
+        if (type === 'daily') {
+            document.getElementById('dailyPeriodBox').style.display = 'block';
+            document.getElementById('taxBox').style.display = 'none';
+            document.getElementById('attendanceBox').style.display = 'none';
+        } else {
+            document.getElementById('dailyPeriodBox').style.display = 'none';
+            document.getElementById('taxBox').style.display = 'block';
+            document.getElementById('attendanceBox').style.display = 'block';
+        }
+        calculateSalary();
+    }
+
+    function countWorkingDays(startDate, endDate, skipSundays) {
+        let count = 0;
+        let cur = new Date(startDate);
+        while (cur <= endDate) {
+            if (!skipSundays || cur.getDay() !== 0) { // 0 = Sunday
+                count++;
+            }
+            cur.setDate(cur.getDate() + 1);
+        }
+        return count;
+    }
+
+    function calculateSalary() {
+        let empType = document.getElementById('empType').value;
+        let m = parseInt(document.getElementById('monthSelect').value);
+        let year = 2026;
+        let dailyRate = parseFloat(document.getElementById('dailyRate').value) || 0;
+        
+        let days = 0;
+        let baseSalary = 0;
+        let tax = 0;
+
+        if (empType === 'monthly') {
+            let prevMonth = m - 1;
+            let prevYear = year;
+            if (prevMonth === 0) { prevMonth = 12; prevYear = year - 1; }
+
+            let startDate = new Date(prevYear, prevMonth - 1, 21);
+            let endDate = new Date(year, m - 1, 20);
+
+            // ရက်ပေါင်းတွက်ခြင်း
+            let diffTime = Math.abs(endDate - startDate);
+            days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+            baseSalary = days * dailyRate;
+            tax = baseSalary * 0.05; // လစာအပေါ် 5% အခွန်
+        } else {
+            let period = document.getElementById('payPeriod').value;
+            let startDate, endDate;
+
+            if (period === 'p15') { // ၁၅ ရက်နေ့ထုတ် (ပြီးခဲ့သည့်လ ၂၁ - ဒီလ ၅ ရက်)
+                let prevMonth = m - 1;
+                let prevYear = year;
+                if (prevMonth === 0) { prevMonth = 12; prevYear = year - 1; }
+                startDate = new Date(prevYear, prevMonth - 1, 21);
+                endDate = new Date(year, m - 1, 5);
+            } else { // လကုန်ထုတ် (ဒီလ ၆ ရက် - ဒီလ ၂၀ ရက်)
+                startDate = new Date(year, m - 1, 6);
+                endDate = new Date(year, m - 1, 20);
+            }
+
+            // Sunday နှုတ်ပြီး ရက်တွက်ခြင်း
+            days = countWorkingDays(startDate, endDate, true);
+            baseSalary = days * dailyRate;
+            tax = 0; // နေ့စားအတွက် အခွန်မဖြတ်
+        }
+
+        // OT 1.5 ဆ တွက်ချက်ခြင်း (၁ နာရီနှုန်း = (တစ်ရက်နှုန်း / ၈ နာရီ) * 1.5)
+        let otRatePerHour = (dailyRate / 8) * 1.5;
+        let otHours = parseFloat(document.getElementById('otHours').value) || 0;
+        let otPay = otHours * otRatePerHour;
+
+        let curAttendance = (empType === 'monthly') ? attendanceBonus : 0;
+
+        // လက်ခံရရှိမည့် စုစုပေါင်း
+        grandTotalThb = (baseSalary - tax) + otPay + curAttendance;
+
+        // ကျပ်ငွေ သို့ ပြောင်းလဲခြင်း
+        let baseSalaryMmk = baseSalary * rate;
+        let taxMmk = tax * rate;
+        let otPayMmk = otPay * rate;
+        let attendanceMmk = curAttendance * rate;
+        let totalMmk = grandTotalThb * rate;
+
+        document.getElementById('daysCount').innerText = days;
+        document.getElementById('baseSalary').innerText = baseSalary.toLocaleString('en-US', {maximumFractionDigits: 2});
+        document.getElementById('baseSalaryMmk').innerText = '(' + Math.round(baseSalaryMmk).toLocaleString() + ' ကျပ်)';
+        
+        document.getElementById('taxAmount').innerText = tax.toLocaleString('en-US', {maximumFractionDigits: 2});
+        document.getElementById('taxMmk').innerText = '(-' + Math.round(taxMmk).toLocaleString() + ' ကျပ်)';
+
+        document.getElementById('otRateDisplay').innerText = otRatePerHour.toFixed(2);
+        document.getElementById('otPay').innerText = otPay.toLocaleString('en-US', {maximumFractionDigits: 2});
+        document.getElementById('otPayMmk').innerText = '(' + Math.round(otPayMmk).toLocaleString() + ' ကျပ်)';
+
+        document.getElementById('attendanceMmk').innerText = '(' + Math.round(attendanceMmk).toLocaleString() + ' ကျပ်)';
+        
+        document.getElementById('totalIncomeP1').innerText = grandTotalThb.toLocaleString('en-US', {maximumFractionDigits: 2});
+        document.getElementById('totalIncomeP1Mmk').innerText = '(' + Math.round(totalMmk).toLocaleString() + ' ကျပ်)';
+    }
+
+    function goToPage2() {
+        if (grandTotalThb <= 0) {
+            alert('ကျေးဇူးပြု၍ ဝင်ငွေ တွက်ချက်ပါ');
+            return;
+        }
+
+        let totalMmk = grandTotalThb * rate;
+        document.getElementById('totalHeaderThb').innerText = 'စုစုပေါင်း: ' + grandTotalThb.toLocaleString('en-US', {maximumFractionDigits:2}) + ' ฿';
+        document.getElementById('totalHeaderMmk').innerText = '(' + Math.round(totalMmk).toLocaleString() + ' ကျပ်)';
+
+        function setVal(idThb, idMmk, percent) {
+            let valThb = grandTotalThb * percent;
+            let valMmk = valThb * rate;
+            document.getElementById(idThb).innerText = valThb.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ฿';
+            document.getElementById(idMmk).innerText = '(' + Math.round(valMmk).toLocaleString() + ' ကျပ်)';
+        }
+
+        setVal('exp-thb', 'exp-mmk', 0.60);
+        setVal('emerg-thb', 'emerg-mmk', 0.10);
+        setVal('save-thb', 'save-mmk', 0.20);
+        setVal('extra-thb', 'extra-mmk', 0.10);
+
+        document.getElementById('page1').style.display = 'none';
+        document.getElementById('page2').style.display = 'block';
+    }
+
+    function goToPage1() {
+        document.getElementById('page2').style.display = 'none';
+        document.getElementById('page1').style.display = 'block';
+    }
+
+    calculateSalary();
+</script>
+
+</body>
+</html>
