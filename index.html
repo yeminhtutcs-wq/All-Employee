@@ -52,7 +52,7 @@
         label { font-weight: bold; color: #555; display: block; margin-top: 12px; font-size: 14px; }
         select, input { width: 100%; padding: 10px; font-size: 15px; margin-top: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
         button { width: 100%; padding: 12px; background: #007bff; color: white; font-size: 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .btn-back { background: #6c757d; margin-top: 10px; }
+        .btn-back { background: #6c757d; margin-top: 15px; }
         .info-box { background: #e9ecef; padding: 12px; border-radius: 6px; margin-top: 10px; font-size: 14px; color: #495057; }
         .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .sub-mmk { font-size: 12px; color: #6c757d; text-align: right; margin-top: -2px; }
@@ -64,6 +64,47 @@
         .amt-box { text-align: right; }
         .amt-thb { font-weight: bold; color: #28a745; font-size: 15px; }
         .amt-mmk { font-size: 11px; color: #6c757d; margin-top: 2px; }
+
+        /* ဒုတိယစာမျက်နှာ ငွေလဲတွက်စက်ဒီဇိုင်း */
+        .converter-box {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .converter-box h4 {
+            margin: 0 0 5px 0;
+            color: #007bff;
+            font-size: 15px;
+            text-align: center;
+        }
+        .rate-badge {
+            text-align: center;
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: bold;
+            margin-bottom: 12px;
+            background: #e9ecef;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        .calc-group {
+            margin-bottom: 12px;
+        }
+        .calc-group label {
+            font-size: 12px;
+            margin-top: 0;
+            color: #333;
+        }
+        .calc-result {
+            font-size: 13px;
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 4px;
+            text-align: right;
+        }
+
         .footer-credits { text-align: center; font-size: 13px; color: #888; font-weight: bold; margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ddd; }
     </style>
 </head>
@@ -226,6 +267,28 @@
             </div>
         </div>
 
+        <!-- 🧮 ငွေလဲနှုန်း သီးသန့်တွက်စက် (Converter) -->
+        <div class="converter-box">
+            <h4>🧮 မြန်မာကျပ် ↔ ထိုင်းဘတ် သီးသန့်တွက်စက်</h4>
+            <div class="rate-badge" id="converterRateDisplay">လက်ရှိ ပေါက်ဈေး: ၁ သိန်း = 780 ฿</div>
+
+            <!-- ကျပ် မှ ဘတ် -->
+            <div class="calc-group">
+                <label for="inputMmk">မြန်မာကျပ် ထည့်ပါ:</label>
+                <input type="number" id="inputMmk" placeholder="ဥပမာ - 100000" oninput="convertMmkToThb()">
+                <div class="calc-result" id="resultThb">0 ฿</div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px dashed #ccc; margin: 10px 0;">
+
+            <!-- ဘတ် မှ ကျပ် -->
+            <div class="calc-group">
+                <label for="inputThb">ထိုင်းဘတ် ထည့်ပါ:</label>
+                <input type="number" id="inputThb" placeholder="ဥပမာ - 1000" oninput="convertThbToMmk()">
+                <div class="calc-result" id="resultMmk">0 ကျပ်</div>
+            </div>
+        </div>
+
         <button class="btn-back" onclick="goToPage1()">⬅ Back (ရှေ့သို့ပြန်သွားရန်)</button>
 
         <div class="footer-credits">Designed By Ye Min Htut</div>
@@ -234,7 +297,6 @@
 
 <script>
     let grandTotalThb = 0;
-    let currentRate = 100000 / 780; 
 
     function getRate() {
         let thbVal = parseFloat(document.getElementById('exchangeRate').value) || 780;
@@ -359,8 +421,13 @@
             return;
         }
 
+        let thbVal = parseFloat(document.getElementById('exchangeRate').value) || 780;
         let rate = getRate();
         let totalMmk = grandTotalThb * rate;
+
+        // အပေါ် ပေါက်ဈေး ပြသမှု ပြင်ရန်
+        document.getElementById('converterRateDisplay').innerText = 'လက်ရှိ ပေါက်ဈေး: ၁ သိန်း = ' + thbVal + ' ฿';
+
         document.getElementById('totalHeaderThb').innerText = 'စုစုပေါင်း: ' + grandTotalThb.toLocaleString('en-US', {maximumFractionDigits:2}) + ' ฿';
         document.getElementById('totalHeaderMmk').innerText = '(' + Math.round(totalMmk).toLocaleString() + ' ကျပ်)';
 
@@ -376,6 +443,10 @@
         setVal('save-thb', 'save-mmk', 0.20);
         setVal('extra-thb', 'extra-mmk', 0.10);
 
+        // စာမျက်နှာ ၂ ရောက်ရင် ငွေလဲတွက်စက်အကွက်များကို Reset/Update လုပ်မည်
+        convertMmkToThb();
+        convertThbToMmk();
+
         document.getElementById('page1').style.display = 'none';
         document.getElementById('page2').style.display = 'block';
     }
@@ -383,6 +454,21 @@
     function goToPage1() {
         document.getElementById('page2').style.display = 'none';
         document.getElementById('page1').style.display = 'block';
+    }
+
+    /* ဒုတိယ စာမျက်နှာ ငွေလဲတွက်စက် စနစ်များ */
+    function convertMmkToThb() {
+        let mmk = parseFloat(document.getElementById('inputMmk').value) || 0;
+        let thbRate = parseFloat(document.getElementById('exchangeRate').value) || 780;
+        let thbResult = (mmk / 100000) * thbRate;
+        document.getElementById('resultThb').innerText = thbResult.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ฿';
+    }
+
+    function convertThbToMmk() {
+        let thb = parseFloat(document.getElementById('inputThb').value) || 0;
+        let rate = getRate();
+        let mmkResult = thb * rate;
+        document.getElementById('resultMmk').innerText = Math.round(mmkResult).toLocaleString() + ' ကျပ်';
     }
 
     toggleEmpType();
