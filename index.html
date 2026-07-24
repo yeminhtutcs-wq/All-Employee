@@ -105,6 +105,11 @@
             text-align: right;
         }
 
+        .date-select-container {
+            display: flex;
+            gap: 10px;
+        }
+
         .footer-credits { text-align: center; font-size: 13px; color: #888; font-weight: bold; margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ddd; }
     </style>
 </head>
@@ -133,21 +138,34 @@
             <option value="daily">နေ့စား (၁၅ ရက်နေ့ / လကုန်ထုတ်)</option>
         </select>
 
-        <label for="monthSelect">လ ရွေးချယ်ပါ (၂၀၂၆):</label>
-        <select id="monthSelect" onchange="calculateSalary()">
-            <option value="1">ဇန်နဝါရီ</option>
-            <option value="2">ဖေဖော်ဝါရီ</option>
-            <option value="3">မတ်</option>
-            <option value="4">ဧပြီ</option>
-            <option value="5">မေ</option>
-            <option value="6">ဇွန်</option>
-            <option value="7" selected>ဇူလိုင်</option>
-            <option value="8">ဩဂုတ်</option>
-            <option value="9">စက်တင်ဘာ</option>
-            <option value="10">အောက်တိုဘာ</option>
-            <option value="11">နိုဝင်ဘာ</option>
-            <option value="12">ဒီဇင်ဘာ</option>
-        </select>
+        <!-- ခုနှစ် နှင့် လ ရွေးချယ်ရန် -->
+        <label>ခုနှစ် နှင့် လ ရွေးချယ်ပါ:</label>
+        <div class="date-select-container">
+            <select id="yearSelect" onchange="calculateSalary()" style="width: 40%;">
+                <option value="2024">၂၀၂၄</option>
+                <option value="2025">၂၀၂၅</option>
+                <option value="2026" selected>၂၀၂၆</option>
+                <option value="2027">၂၀၂၇</option>
+                <option value="2028">၂၀၂၈</option>
+                <option value="2029">၂၀၂၉</option>
+                <option value="2030">၂၀၃၀</option>
+            </select>
+
+            <select id="monthSelect" onchange="calculateSalary()" style="width: 60%;">
+                <option value="1">ဇန်နဝါရီ</option>
+                <option value="2">ဖေဖော်ဝါရီ</option>
+                <option value="3">မတ်</option>
+                <option value="4">ဧပြီ</option>
+                <option value="5">မေ</option>
+                <option value="6">ဇွန်</option>
+                <option value="7" selected>ဇူလိုင်</option>
+                <option value="8">ဩဂုတ်</option>
+                <option value="9">စက်တင်ဘာ</option>
+                <option value="10">အောက်တိုဘာ</option>
+                <option value="11">နိုဝင်ဘာ</option>
+                <option value="12">ဒီဇင်ဘာ</option>
+            </select>
+        </div>
 
         <!-- နေ့စား သီးသန့် ရွေးချယ်ရန် -->
         <div id="dailyPeriodBox" style="display:none;">
@@ -341,8 +359,8 @@
     function calculateSalary() {
         let rate = getRate();
         let empType = document.getElementById('empType').value;
+        let year = parseInt(document.getElementById('yearSelect').value) || 2026;
         let m = parseInt(document.getElementById('monthSelect').value);
-        let year = 2026;
         let dailyRate = parseFloat(document.getElementById('dailyRate').value) || 0;
         
         let days = 0;
@@ -425,7 +443,6 @@
         let rate = getRate();
         let totalMmk = grandTotalThb * rate;
 
-        // အပေါ် ပေါက်ဈေး ပြသမှု ပြင်ရန်
         document.getElementById('converterRateDisplay').innerText = 'လက်ရှိ ပေါက်ဈေး: ၁ သိန်း = ' + thbVal + ' ฿';
 
         document.getElementById('totalHeaderThb').innerText = 'စုစုပေါင်း: ' + grandTotalThb.toLocaleString('en-US', {maximumFractionDigits:2}) + ' ฿';
@@ -443,7 +460,6 @@
         setVal('save-thb', 'save-mmk', 0.20);
         setVal('extra-thb', 'extra-mmk', 0.10);
 
-        // စာမျက်နှာ ၂ ရောက်ရင် ငွေလဲတွက်စက်အကွက်များကို Reset/Update လုပ်မည်
         convertMmkToThb();
         convertThbToMmk();
 
@@ -456,7 +472,6 @@
         document.getElementById('page1').style.display = 'block';
     }
 
-    /* ဒုတိယ စာမျက်နှာ ငွေလဲတွက်စက် စနစ်များ */
     function convertMmkToThb() {
         let mmk = parseFloat(document.getElementById('inputMmk').value) || 0;
         let thbRate = parseFloat(document.getElementById('exchangeRate').value) || 780;
@@ -476,3 +491,4 @@
 
 </body>
 </html>
+
