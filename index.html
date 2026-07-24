@@ -30,12 +30,23 @@
         }
 
         /* ဘတ်ဈေး ထည့်သည့်အကွက် (ညာဘက်အောက်) */
+        .rate-container-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-top: 8px;
+        }
+        .rate-hint {
+            font-size: 10px;
+            color: #d9534f;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
         .rate-container {
             display: flex;
             justify-content: flex-end;
             align-items: center;
             gap: 6px;
-            margin-top: 8px;
             font-size: 12px;
             font-weight: bold;
             color: #495057;
@@ -125,10 +136,13 @@
             <h2>၁။ လစာနှင့် OT တွက်ချက်ရန်</h2>
             <div class="animated-text">အသုံးပြုသူတိုင်းအဆင်ပြေကြပါစေ</div>
             
-            <!-- ဘတ်ဈေး ထည့်ရန် အကွက် -->
-            <div class="rate-container">
-                <span>၁ သိန်းဈေး (ဘတ်):</span>
-                <input type="number" id="exchangeRate" class="rate-input" value="780" oninput="calculateSalary()">
+            <!-- ဘတ်ဈေး ထည့်ရန် အကွက် နှင့် သတိပေးစာ -->
+            <div class="rate-container-wrapper">
+                <span class="rate-hint">(ဒီနေ့ပေါက်ဈေးရိုက်ထည့်ပါ)</span>
+                <div class="rate-container">
+                    <span>၁ သိန်းဈေး (ဘတ်):</span>
+                    <input type="number" id="exchangeRate" class="rate-input" value="780" oninput="calculateSalary()">
+                </div>
             </div>
         </div>
         
