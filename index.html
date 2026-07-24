@@ -57,7 +57,7 @@
         <!-- နေ့စား သီးသန့် ရွေးချယ်ရန် -->
         <div id="dailyPeriodBox" style="display:none;">
             <label for="payPeriod">နေ့စား ထုတ်ရက် ရွေးပါ:</label>
-            <select id="payPeriod" onchange="calculateSalary()">
+            <select id="payPeriod" onchange="toggleEmpType()">
                 <option value="p15">၁၅ ရက်နေ့ထုတ် (ပြီးခဲ့သည့်လ ၂၁ မှ ဒီလ ၅ ရက်ထိ)</option>
                 <option value="pend">လကုန်ထုတ် (ဒီလ ၆ ရက် မှ ဒီလ ၂၀ ရက်ထိ)</option>
             </select>
@@ -78,7 +78,7 @@
             <div class="sub-mmk" id="baseSalaryMmk">(0 ကျပ်)</div>
         </div>
 
-        <!-- လခစား အခွန် 5% -->
+        <!-- အခွန် 5% -->
         <div id="taxBox" class="info-box" style="background:#fff3cd; color:#856404;">
             <div class="info-row">
                 <span>လစာ အခွန် (5% ဖြတ်တောက်):</span>
@@ -93,22 +93,32 @@
         <div class="info-box">
             <div class="info-row">
                 <span>OT ၁ နာရီနှုန်း (1.5 ဆ):</span>
-                <div><b id="otRateDisplay">75</b> ฿/hr</div>
+                <div><b id="otRateDisplay">0</b> ฿/hr</div>
             </div>
             <div class="info-row">
                 <span>OT ကြေး စုစုပေါင်း:</span>
                 <div><b id="otPay">0</b> ฿</div>
             </div>
             <div class="sub-mmk" id="otPayMmk">(0 ကျပ်)</div>
-            
-            <div id="attendanceBox">
-                <hr style="border: 0; border-top: 1px solid #d1d5db; margin: 8px 0;">
-                <div class="info-row">
-                    <span>ရက်မှန်ကြေး:</span>
-                    <div><b>400</b> ฿</div>
-                </div>
-                <div class="sub-mmk" id="attendanceMmk">(0 ကျပ်)</div>
+        </div>
+
+        <!-- ရက်မှန်ကြေး ရွေးချယ်မှု -->
+        <div id="attendanceContainer">
+            <label for="attendanceBonusSelect">ရက်မှန်ကြေး ရွေးပါ (ဘတ်):</label>
+            <select id="attendanceBonusSelect" onchange="calculateSalary()">
+                <option value="400" selected>400 ฿</option>
+                <option value="300">300 ฿</option>
+                <option value="200">200 ฿</option>
+                <option value="0">0 ฿ (မရပါ)</option>
+            </select>
+        </div>
+
+        <div class="info-box" id="attendanceDisplayBox">
+            <div class="info-row">
+                <span>ရက်မှန်ကြေး:</span>
+                <div><b id="attendanceValDisplay">400</b> ฿</div>
             </div>
+            <div class="sub-mmk" id="attendanceMmk">(0 ကျပ်)</div>
         </div>
 
         <div class="info-box" style="background:#e8f5e9;">
@@ -167,18 +177,27 @@
 <script>
     let grandTotalThb = 0;
     const rate = 100000 / 780; // 100,000 MMK = 780 THB
-    const attendanceBonus = 400; // ရက်မှန်ကြေး 400 ฿
 
     function toggleEmpType() {
         let type = document.getElementById('empType').value;
+        let period = document.getElementById('payPeriod').value;
+
         if (type === 'daily') {
             document.getElementById('dailyPeriodBox').style.display = 'block';
-            document.getElementById('taxBox').style.display = 'none';
-            document.getElementById('attendanceBox').style.display = 'none';
+            if (period === 'p15') {
+                // နေ့စား ၁၅ ရက်ထုတ်ဆိုရင် ရက်မှန်ကြေး မရပါ
+                document.getElementById('attendanceContainer').style.display = 'none';
+                document.getElementById('attendanceDisplayBox').style.display = 'none';
+            } else {
+                // နေ့စား လကုန်ထုတ်ဆိုရင် ရက်မှန်ကြေး ရွေးလို့ရမည်
+                document.getElementById('attendanceContainer').style.display = 'block';
+                document.getElementById('attendanceDisplayBox').style.display = 'block';
+            }
         } else {
+            // လခစား
             document.getElementById('dailyPeriodBox').style.display = 'none';
-            document.getElementById('taxBox').style.display = 'block';
-            document.getElementById('attendanceBox').style.display = 'block';
+            document.getElementById('attendanceContainer').style.display = 'block';
+            document.getElementById('attendanceDisplayBox').style.display = 'block';
         }
         calculateSalary();
     }
@@ -203,7 +222,6 @@
         
         let days = 0;
         let baseSalary = 0;
-        let tax = 0;
 
         if (empType === 'monthly') {
             let prevMonth = m - 1;
@@ -213,12 +231,9 @@
             let startDate = new Date(prevYear, prevMonth - 1, 21);
             let endDate = new Date(year, m - 1, 20);
 
-            // ရက်ပေါင်းတွက်ခြင်း
             let diffTime = Math.abs(endDate - startDate);
             days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
             baseSalary = days * dailyRate;
-            tax = baseSalary * 0.05; // လစာအပေါ် 5% အခွန်
         } else {
             let period = document.getElementById('payPeriod').value;
             let startDate, endDate;
@@ -237,15 +252,23 @@
             // Sunday နှုတ်ပြီး ရက်တွက်ခြင်း
             days = countWorkingDays(startDate, endDate, true);
             baseSalary = days * dailyRate;
-            tax = 0; // နေ့စားအတွက် အခွန်မဖြတ်
         }
+
+        // လစာ အခွန် (5% ဖြတ်တောက်မှု)
+        let tax = baseSalary * 0.05;
 
         // OT 1.5 ဆ တွက်ချက်ခြင်း (၁ နာရီနှုန်း = (တစ်ရက်နှုန်း / ၈ နာရီ) * 1.5)
         let otRatePerHour = (dailyRate / 8) * 1.5;
         let otHours = parseFloat(document.getElementById('otHours').value) || 0;
         let otPay = otHours * otRatePerHour;
 
-        let curAttendance = (empType === 'monthly') ? attendanceBonus : 0;
+        // ရက်မှန်ကြေး တွက်ချက်ခြင်း
+        let curAttendance = 0;
+        let period = document.getElementById('payPeriod').value;
+
+        if (empType === 'monthly' || (empType === 'daily' && period === 'pend')) {
+            curAttendance = parseFloat(document.getElementById('attendanceBonusSelect').value) || 0;
+        }
 
         // လက်ခံရရှိမည့် စုစုပေါင်း
         grandTotalThb = (baseSalary - tax) + otPay + curAttendance;
@@ -268,6 +291,7 @@
         document.getElementById('otPay').innerText = otPay.toLocaleString('en-US', {maximumFractionDigits: 2});
         document.getElementById('otPayMmk').innerText = '(' + Math.round(otPayMmk).toLocaleString() + ' ကျပ်)';
 
+        document.getElementById('attendanceValDisplay').innerText = curAttendance;
         document.getElementById('attendanceMmk').innerText = '(' + Math.round(attendanceMmk).toLocaleString() + ' ကျပ်)';
         
         document.getElementById('totalIncomeP1').innerText = grandTotalThb.toLocaleString('en-US', {maximumFractionDigits: 2});
@@ -305,7 +329,7 @@
         document.getElementById('page1').style.display = 'block';
     }
 
-    calculateSalary();
+    toggleEmpType();
 </script>
 
 </body>
