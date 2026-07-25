@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ဝင်ငွေနှင့် ဘတ်ဂျက် တွက်စက်</title>
+
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <style>
-        body { font-family: sans-serif; background: #f4f6f9; padding: 15px; margin: 0; }
-        .card { background: white; padding: 20px; border-radius: 12px; max-width: 420px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: #eef2f5; padding: 15px; margin: 0; }
+        .card { background: white; padding: 20px; border-radius: 16px; max-width: 420px; margin: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
         
-        .top-notice { font-size: 11px; color: #d9534f; text-align: center; margin-bottom: 8px; font-weight: bold; }
+        .top-notice { font-size: 11px; color: #d9534f; text-align: center; margin-bottom: 12px; font-weight: bold; }
         .header-box { position: relative; text-align: center; margin-bottom: 15px; }
-        h2 { color: #333; margin: 0; font-size: 20px; }
+        h2 { color: #2c3e50; margin: 0; font-size: 20px; font-weight: 700; }
         h3 { color: #007bff; margin: 5px 0 15px 0; font-size: 16px; text-align: center; }
         
         .user-badge {
@@ -24,54 +30,70 @@
         }
 
         @keyframes moveSide {
-            0% { transform: translateX(-8px); }
-            100% { transform: translateX(8px); }
+            0% { transform: translateX(-6px); }
+            100% { transform: translateX(6px); }
         }
 
-        .rate-container-wrapper { display: flex; flex-direction: column; align-items: flex-end; margin-top: 8px; }
-        .rate-hint { font-size: 10px; color: #d9534f; font-weight: bold; margin-bottom: 2px; }
+        .rate-container-wrapper { display: flex; flex-direction: column; align-items: flex-end; margin-top: 10px; }
+        .rate-hint { font-size: 11px; color: #d9534f; font-weight: bold; margin-bottom: 3px; }
         .rate-container { display: flex; justify-content: flex-end; align-items: center; gap: 6px; font-size: 12px; font-weight: bold; color: #495057; }
-        .rate-input { width: 80px !important; padding: 4px 8px !important; font-size: 13px !important; margin-top: 0 !important; text-align: center; border: 1px solid #007bff !important; }
+        .rate-input { width: 85px !important; padding: 6px 8px !important; font-size: 14px !important; margin-top: 0 !important; text-align: center; border: 1.5px solid #007bff !important; border-radius: 6px !important; }
 
-        label { font-weight: bold; color: #555; display: block; margin-top: 12px; font-size: 14px; }
-        select, input { width: 100%; padding: 10px; font-size: 15px; margin-top: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
+        label { font-weight: 600; color: #444; display: block; margin-top: 14px; font-size: 13px; }
+        select, input[type="text"], input[type="number"], input[type="password"] { 
+            width: 100%; padding: 12px; font-size: 15px; margin-top: 6px; border: 1px solid #ccc; border-radius: 8px; background-color: #fafafa;
+        }
+        select:focus, input:focus { outline: none; border-color: #007bff; background-color: #fff; }
         
-        button { width: 100%; padding: 12px; background: #007bff; color: white; font-size: 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .password-container { position: relative; width: 100%; }
+        .password-container input { padding-right: 45px; }
+        .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none; font-size: 18px; }
+
+        button { width: 100%; padding: 12px; background: #007bff; color: white; font-size: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        button:active { transform: scale(0.99); }
         .btn-secondary { background: #6c757d; }
         .btn-success { background: #28a745; }
-        .btn-danger { background: #dc3545; padding: 6px 10px; font-size: 12px; margin-top: 0; width: auto; }
-        .btn-warning { background: #ffc107; color: #000; padding: 6px 10px; font-size: 12px; margin-top: 0; width: auto; }
-        .btn-skip { background: transparent; color: #6c757d; border: 1px solid #6c757d; margin-top: 10px; }
+        .btn-danger { background: #dc3545; padding: 6px 10px; font-size: 12px; margin-top: 0; width: auto; border-radius: 4px; }
+        .btn-warning { background: #ffc107; color: #000; padding: 6px 10px; font-size: 12px; margin-top: 0; width: auto; border-radius: 4px; }
+        .btn-skip { background: transparent; color: #6c757d; border: 1px solid #6c757d; margin-top: 12px; }
 
-        .info-box { background: #e9ecef; padding: 12px; border-radius: 6px; margin-top: 10px; font-size: 14px; color: #495057; }
-        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .sub-mmk { font-size: 12px; color: #6c757d; text-align: right; margin-top: -2px; }
+        .info-box { background: #f8f9fa; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 13px; color: #495057; border: 1px solid #e9ecef; }
+        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .sub-mmk { font-size: 12px; color: #6c757d; text-align: right; }
         
-        .total-header { background: #007bff; color: white; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; }
+        .total-header { background: #007bff; color: white; padding: 14px; border-radius: 10px; text-align: center; margin-bottom: 15px; }
         .total-header h3 { margin: 0; font-size: 18px; color: white; }
         .total-header p { margin: 4px 0 0; font-size: 13px; opacity: 0.9; }
 
-        .rem-hint { font-size: 11px; color: #888; text-align: right; margin-top: 2px; font-weight: normal; }
+        .rem-hint { font-size: 11px; color: #6c757d; text-align: right; margin-top: 3px; font-weight: bold; }
 
-        /* Auth Tabs */
         .tab-box { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; background: #e9ecef; color: #333; border-radius: 6px; text-align: center; font-weight: bold; cursor: pointer; }
+        .tab-btn { flex: 1; padding: 10px; background: #e9ecef; color: #555; border-radius: 8px; text-align: center; font-weight: bold; cursor: pointer; }
         .tab-btn.active { background: #007bff; color: white; }
 
-        /* History Card */
-        .history-item { background: #fff; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
-        .history-item h4 { margin: 0 0 8px 0; color: #007bff; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .converter-box { background: #f8f9fa; border: 1px solid #007bff; padding: 12px; border-radius: 8px; margin-top: 20px; }
+        .converter-box h4 { margin: 0 0 10px 0; color: #007bff; text-align: center; font-size: 14px; }
+        .converter-grid { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+
+        .user-accordion { border: 1px solid #007bff; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+        .user-accordion-header { background: #e7f3ff; color: #007bff; padding: 12px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .user-accordion-body { padding: 12px; display: none; background: #fff; }
+
+        .user-info-banner { background: #fff3cd; color: #856404; padding: 8px; border-radius: 6px; font-size: 13px; font-weight: bold; margin-bottom: 10px; border: 1px solid #ffeeba; }
+
+        .history-item { background: #fafafa; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 13px; }
+        .history-item h4 { margin: 0 0 8px 0; color: #007bff; font-size: 14px; border-bottom: 1px solid #eee; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
 
         .date-select-container { display: flex; gap: 10px; }
-        .footer-credits { text-align: center; font-size: 13px; color: #888; font-weight: bold; margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ddd; }
+        .footer-credits { text-align: center; font-size: 12px; color: #888; font-weight: bold; margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ddd; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div class="top-notice">⚠️ အသုံးပြုခါနီးတိုင်း Update ဖြစ်နေအောင် Refresh လုပ်ပေးပါ</div>
+    <div class="top-notice">အသုံးမပြုမီ Refresh တစ်ခါ လုပ်ပေးပါ</div>
 
-    <!-- ---------------- စာမျက်နှာ (၀) - LOGIN / REGISTER ---------------- -->
+    <!-- PAGE 0 - LOGIN / REGISTER -->
     <div id="pageAuth">
         <div class="header-box">
             <h2>အကောင့်ဝင်ရန် / အသစ်ပြုလုပ်ရန်</h2>
@@ -89,7 +111,10 @@
             <input type="text" id="loginName" placeholder="ဥပမာ - YEMINHTUT" oninput="this.value = this.value.toUpperCase()">
 
             <label>Password (ဂဏန်း ၆ လုံး):</label>
-            <input type="password" id="loginPass" maxlength="6" placeholder="******">
+            <div class="password-container">
+                <input type="password" id="loginPass" maxlength="6" placeholder="ဂဏန်း ၆ လုံး ထည့်ပါ">
+                <span class="toggle-password" onclick="togglePass('loginPass', this)"></span>
+            </div>
 
             <button onclick="handleLogin()">Login ဝင်မည်</button>
         </div>
@@ -100,7 +125,10 @@
             <input type="text" id="regName" placeholder="ဥပမာ - YEMINHTUT" oninput="this.value = this.value.toUpperCase()">
 
             <label>Password (ဂဏန်း ၆ လုံး):</label>
-            <input type="password" id="regPass" maxlength="6" placeholder="ဂဏန်း ၆ လုံး ထည့်ပါ">
+            <div class="password-container">
+                <input type="password" id="regPass" maxlength="6" placeholder="ဂဏန်း ၆ လုံး ထည့်ပါ">
+                <span class="toggle-password" onclick="togglePass('regPass', this)"></span>
+            </div>
 
             <button class="btn-success" onclick="handleRegister()">Register အကောင့်သစ်ဖွင့်မည်</button>
         </div>
@@ -109,7 +137,7 @@
         <div class="footer-credits">Designed By Ye Min Htut</div>
     </div>
 
-    <!-- ---------------- စာမျက်နှာ (၁) - လစာနှင့် OT တွက်စက် ---------------- -->
+    <!-- PAGE 1 - SALARY CALCULATOR -->
     <div id="page1" style="display:none;">
         <div class="header-box">
             <div id="currentUserDisplay"></div>
@@ -139,8 +167,6 @@
                 <option value="2026" selected>၂၀၂၆</option>
                 <option value="2027">၂၀၂၇</option>
                 <option value="2028">၂၀၂၈</option>
-                <option value="2029">၂၀၂၉</option>
-                <option value="2030">၂၀၃၀</option>
             </select>
 
             <select id="monthSelect" onchange="calculateSalary()" style="width: 60%;">
@@ -177,15 +203,15 @@
             </div>
             <div class="info-row">
                 <span>လုပ်အားခ စုစုပေါင်း:</span>
-                <div><b id="baseSalary">0</b> ฿</div>
+                <div><b id="baseSalary">0</b> </div>
             </div>
             <div class="sub-mmk" id="baseSalaryMmk">(0 ကျပ်)</div>
         </div>
 
-        <div id="taxBox" class="info-box" style="background:#fff3cd; color:#856404;">
+        <div id="taxBox" class="info-box" style="background:#fff3cd; color:#856404; border-color:#ffeeba;">
             <div class="info-row">
                 <span>ပကန်ဆခွန် နှုတ်ငွေ:</span>
-                <div>-<b id="taxAmount">0</b> ฿</div>
+                <div>-<b id="taxAmount">0</b> </div>
             </div>
             <div class="sub-mmk" id="taxMmk" style="color:#856404;">(-0 ကျပ်)</div>
         </div>
@@ -196,11 +222,11 @@
         <div class="info-box">
             <div class="info-row">
                 <span>OT ၁ နာရီနှုန်း (1.5 ဆ):</span>
-                <div><b id="otRateDisplay">0</b> ฿/hr</div>
+                <div><b id="otRateDisplay">0</b> /hr</div>
             </div>
             <div class="info-row">
                 <span>OT ကြေး စုစုပေါင်း:</span>
-                <div><b id="otPay">0</b> ฿</div>
+                <div><b id="otPay">0</b> </div>
             </div>
             <div class="sub-mmk" id="otPayMmk">(0 ကျပ်)</div>
         </div>
@@ -208,102 +234,139 @@
         <div id="attendanceContainer">
             <label for="attendanceBonusSelect">ရက်မှန်ကြေး ရွေးပါ (ဘတ်):</label>
             <select id="attendanceBonusSelect" onchange="calculateSalary()">
-                <option value="400" selected>400 ฿</option>
-                <option value="300">300 ฿</option>
-                <option value="200">200 ฿</option>
-                <option value="0">0 ฿ (မရပါ)</option>
+                <option value="400" selected>400 </option>
+                <option value="300">300 </option>
+                <option value="200">200 </option>
+                <option value="0">0  (မရပါ)</option>
             </select>
         </div>
 
         <div class="info-box" id="attendanceDisplayBox">
             <div class="info-row">
                 <span>ရက်မှန်ကြေး:</span>
-                <div><b id="attendanceValDisplay">400</b> ฿</div>
+                <div><b id="attendanceValDisplay">400</b> </div>
             </div>
             <div class="sub-mmk" id="attendanceMmk">(0 ကျပ်)</div>
         </div>
 
-        <div class="info-box" style="background:#e8f5e9;">
-            <div class="info-row" style="font-size:16px; color:#2e7d32;">
+        <div class="info-box" style="background:#e8f5e9; border-color:#c8e6c9;">
+            <div class="info-row" style="font-size:15px; color:#2e7d32;">
                 <span>လက်ခံရရှိမည့် စုစုပေါင်း:</span>
-                <div><b id="totalIncomeP1">0</b> ฿</div>
+                <div><b id="totalIncomeP1">0</b> </div>
             </div>
             <div class="sub-mmk" id="totalIncomeP1Mmk" style="color:#2e7d32; font-weight:bold;">(0 ကျပ်)</div>
         </div>
 
-        <button onclick="goToPage2()">Next (ဒုတိယစာမျက်နှာသို့) ➔</button>
+        <button onclick="goToPage2()">Next (ဒုတိယစာမျက်နှာသို့) </button>
         <button class="btn-secondary" onclick="logout()">Logout / ပြန်ထွက်မည်</button>
 
         <div class="footer-credits">Designed By Ye Min Htut</div>
     </div>
 
-    <!-- ---------------- စာမျက်နှာ (၂) - ဘတ်ဂျက် ခွဲဝေမှု ---------------- -->
+    <!-- PAGE 2 - BUDGET SPLIT -->
     <div id="page2" style="display:none;">
         <h2>၂။ ဝင်ငွေ ခွဲဝေမှု စာရင်း</h2>
 
         <div class="total-header">
-            <h3 id="totalHeaderThb">စုစုပေါင်း: 0 ฿</h3>
+            <h3 id="totalHeaderThb">စုစုပေါင်း: 0 </h3>
             <p id="totalHeaderMmk">(0 ကျပ်)</p>
         </div>
 
         <label>အထွေထွေစရိတ် (ဘတ်):</label>
         <input type="number" id="expInput" placeholder="0" oninput="calculateBudgetSplit()">
-        <div class="rem-hint" id="rem1">ကျန်ငွေ: 0 ฿</div>
+        <div class="rem-hint" id="rem1">ကျန်ငွေ: 0  (0 ကျပ်)</div>
 
         <label>အရေးပေါ်သုံးငွေ (ဘတ်):</label>
         <input type="number" id="emergInput" placeholder="0" oninput="calculateBudgetSplit()">
-        <div class="rem-hint" id="rem2">ကျန်ငွေ: 0 ฿</div>
+        <div class="rem-hint" id="rem2">ကျန်ငွေ: 0  (0 ကျပ်)</div>
 
         <label>စုငွေ (ဘတ်):</label>
         <input type="number" id="saveInput" placeholder="0" oninput="calculateBudgetSplit()">
-        <div class="rem-hint" id="rem3">ကျန်ငွေ: 0 ฿</div>
+        <div class="rem-hint" id="rem3">ကျန်ငွေ: 0  (0 ကျပ်)</div>
 
         <label>အပိုအလိုငွေ (ဘတ်):</label>
         <input type="number" id="extraInput" placeholder="0" oninput="calculateBudgetSplit()">
-        <div class="rem-hint" id="rem4">ကျန်ငွေ: 0 ฿</div>
+        <div class="rem-hint" id="rem4">ကျန်ငွေ: 0  (0 ကျပ်)</div>
 
         <label>အိမ်ပို့ငွေ (ဘတ်):</label>
         <input type="number" id="homeInput" placeholder="0" oninput="calculateBudgetSplit()">
-        <div class="rem-hint" id="rem5">ကျန်ငွေ: 0 ฿</div>
+        <div class="rem-hint" id="rem5">ကျန်ငွေ: 0  (0 ကျပ်)</div>
+
+        <!-- CURRENCY CONVERTER CALCULATOR -->
+        <div class="converter-box">
+            <h4> ငွေလဲလှယ်နှုန်း တွက်စက် (Converter)</h4>
+            <div style="font-size: 11px; text-align: center; color: #555; margin-bottom: 8px;">
+                (လက်ရှိ ပေါက်ဈေး - ၁ သိန်းလျှင် <b id="convRateDisp">780</b> ဘတ်)
+            </div>
+            
+            <label style="margin-top:0;">BAHT  MMK (ဘတ်မှ ကျပ်):</label>
+            <div class="converter-grid">
+                <input type="number" id="thbToMmkInput" placeholder="ဘတ် ထည့်ပါ" oninput="convertThbToMmk()">
+                <span style="font-weight:bold; font-size:13px; color:#28a745; width:100%;" id="thbToMmkRes">= 0 ကျပ်</span>
+            </div>
+
+            <label>MMK  BAHT (ကျပ်မှ ဘတ်):</label>
+            <div class="converter-grid">
+                <input type="number" id="mmkToThbInput" placeholder="ကျပ် ထည့်ပါ" oninput="convertMmkToThb()">
+                <span style="font-weight:bold; font-size:13px; color:#007bff; width:100%;" id="mmkToThbRes">= 0 </span>
+            </div>
+        </div>
 
         <div id="submitContainer" style="display:none;">
             <button class="btn-success" onclick="saveRecord()">သိမ်းဆည်းရန် (Submit)</button>
         </div>
 
         <button class="btn-secondary" onclick="goToHistoryPage()">Saved History (သိမ်းဆည်းထားသည်များကြည့်ရန်)</button>
-        <button class="btn-secondary" onclick="goToPage1()" style="margin-top:8px;">⬅ Back (ရှေ့သို့ပြန်သွားရန်)</button>
+        <button class="btn-secondary" onclick="goToPage1()" style="margin-top:8px;"> Back (ရှေ့သို့ပြန်သွားရန်)</button>
 
         <div class="footer-credits">Designed By Ye Min Htut</div>
     </div>
 
-    <!-- ---------------- စာမျက်နှာ (၃) - SAVED HISTORY ---------------- -->
+    <!-- PAGE 3 - SAVED HISTORY -->
     <div id="pageHistory" style="display:none;">
         <h2 id="historyTitle">သိမ်းဆည်းထားသည့် စာရင်းများ</h2>
         <br>
         <div id="historyListContainer"></div>
 
-        <button class="btn-secondary" onclick="goToPage2()">⬅ Back (ခွဲဝေမှု စာမျက်နှာသို့)</button>
+        <button class="btn-secondary" onclick="goToPage2()"> Back (ခွဲဝေမှု စာမျက်နှာသို့)</button>
         <div class="footer-credits">Designed By Ye Min Htut</div>
     </div>
 </div>
 
 <script>
-    // System Global Variables
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAXSJGQNm61eYIcio9NM50r1JjZ6RmI7JY",
+        authDomain: "salary-9416d.firebaseapp.com",
+        databaseURL: "https://salary-9416d-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "salary-9416d",
+        storageBucket: "salary-9416d.firebasestorage.app",
+        messagingSenderId: "225729984300",
+        appId: "1:225729984300:web:f96eb59347a68cbcf0de89"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     let currentUser = null; 
     let grandTotalThb = 0;
 
-    // Default Admin setup
     function initDatabase() {
-        if (!localStorage.getItem('users')) {
-            let users = {};
-            users['YEMINHTUT1315'] = { pass: '240173', role: 'admin' };
-            localStorage.setItem('users', JSON.stringify(users));
-        }
-        if (!localStorage.getItem('records')) {
-            localStorage.setItem('records', JSON.stringify([]));
-        }
+        const adminRef = db.ref('users/YEMINHTUT1315');
+        adminRef.set({ pass: '085399', role: 'admin' }).catch(err => console.error(err));
     }
     initDatabase();
+
+    function togglePass(id, el) {
+        let input = document.getElementById(id);
+        if (input.type === "password") {
+            input.type = "text";
+            el.innerText = "🙈";
+        } else {
+            input.type = "password";
+            el.innerText = "";
+        }
+    }
 
     function switchAuthTab(tab) {
         if (tab === 'login') {
@@ -328,33 +391,44 @@
             return;
         }
 
-        let users = JSON.parse(localStorage.getItem('users')) || {};
-        if (users[name]) {
-            alert('ဤနာမည်ဖြင့် Register လုပ်ပြီးသားရှိနေပါသည်။ အခြားနာမည်ပြောင်းပါ။');
-            return;
-        }
-
-        users[name] = { pass: pass, role: 'user' };
-        localStorage.setItem('users', JSON.stringify(users));
-
-        alert('Register အကောင့်အောင်မြင်စွာ ပြုလုပ်ပြီးပါပြီ! Login ဝင်ပါခင်ဗျာ။');
-        document.getElementById('regName').value = '';
-        document.getElementById('regPass').value = '';
-        switchAuthTab('login');
+        const userRef = db.ref('users/' + name);
+        userRef.once('value', snapshot => {
+            if (snapshot.exists()) {
+                alert('ဤနာမည်ဖြင့် Register လုပ်ပြီးသားရှိနေပါသည်။ အခြားနာမည်ပြောင်းပါ။');
+            } else {
+                let role = (name === 'YEMINHTUT1315') ? 'admin' : 'user';
+                userRef.set({ pass: pass, role: role }, err => {
+                    if (err) {
+                        alert('အကောင့်ဖွင့်ရာတွင် အမှားအယွင်းရှိပါသည်: ' + err.message);
+                    } else {
+                        alert('Register အကောင့်အောင်မြင်စွာ ပြုလုပ်ပြီးပါပြီ! Login ဝင်ပါခင်ဗျာ။');
+                        document.getElementById('regName').value = '';
+                        document.getElementById('regPass').value = '';
+                        switchAuthTab('login');
+                    }
+                });
+            }
+        });
     }
 
     function handleLogin() {
         let name = document.getElementById('loginName').value.trim().toUpperCase();
         let pass = document.getElementById('loginPass').value.trim();
 
-        let users = JSON.parse(localStorage.getItem('users')) || {};
-
-        if (users[name] && users[name].pass === pass) {
-            currentUser = { name: name, role: users[name].role };
-            startApp();
-        } else {
-            alert('နာမည် သို့မဟုတ် Password မှားယွင်းနေပါသည်။');
+        if (!name || !pass) {
+            alert('နာမည်နှင့် Password ရိုက်ထည့်ပါ။');
+            return;
         }
+
+        db.ref('users/' + name).once('value', snapshot => {
+            let userData = snapshot.val();
+            if (userData && userData.pass === pass) {
+                currentUser = { name: name, role: userData.role || (name === 'YEMINHTUT1315' ? 'admin' : 'user') };
+                startApp();
+            } else {
+                alert('နာမည် သို့မဟုတ် Password မှားယွင်းနေပါသည်။');
+            }
+        });
     }
 
     function skipAuth() {
@@ -367,7 +441,7 @@
         document.getElementById('page1').style.display = 'block';
 
         if (currentUser) {
-            document.getElementById('currentUserDisplay').innerHTML = `<div class="user-badge">👤 ${currentUser.name} ${currentUser.role === 'admin' ? '(Admin)' : ''}</div>`;
+            document.getElementById('currentUserDisplay').innerHTML = `<div class="user-badge"> ${currentUser.name} ${currentUser.role === 'admin' ? '(Admin)' : ''}</div>`;
             document.getElementById('submitContainer').style.display = 'block';
         } else {
             document.getElementById('currentUserDisplay').innerHTML = '';
@@ -499,8 +573,11 @@
         let rate = getRate();
         let totalMmk = grandTotalThb * rate;
 
-        document.getElementById('totalHeaderThb').innerText = 'စုစုပေါင်း: ' + grandTotalThb.toLocaleString('en-US', {maximumFractionDigits:2}) + ' ฿';
+        document.getElementById('totalHeaderThb').innerText = 'စုစုပေါင်း: ' + grandTotalThb.toLocaleString('en-US', {maximumFractionDigits:2}) + ' ';
         document.getElementById('totalHeaderMmk').innerText = '(' + Math.round(totalMmk).toLocaleString() + ' ကျပ်)';
+
+        let rawRate = parseFloat(document.getElementById('exchangeRate').value) || 780;
+        document.getElementById('convRateDisp').innerText = rawRate;
 
         document.getElementById('page1').style.display = 'none';
         document.getElementById('page2').style.display = 'block';
@@ -515,6 +592,7 @@
     }
 
     function calculateBudgetSplit() {
+        let rate = getRate();
         let exp = parseFloat(document.getElementById('expInput').value) || 0;
         let emerg = parseFloat(document.getElementById('emergInput').value) || 0;
         let save = parseFloat(document.getElementById('saveInput').value) || 0;
@@ -527,21 +605,56 @@
         let rem4 = rem3 - extra;
         let rem5 = rem4 - home;
 
+        let rem1Mmk = rem1 > 0 ? Math.round(rem1 * rate) : 0;
+        let rem2Mmk = rem2 > 0 ? Math.round(rem2 * rate) : 0;
+        let rem3Mmk = rem3 > 0 ? Math.round(rem3 * rate) : 0;
+        let rem4Mmk = rem4 > 0 ? Math.round(rem4 * rate) : 0;
+        let rem5Mmk = rem5 > 0 ? Math.round(rem5 * rate) : 0;
+
         if (rem5 < 0) {
             alert('စုစုပေါင်း ရရှိငွေထက် ပိုမိုသုံးစွဲ၍ မရပါခင်ဗျာ။');
         }
 
-        document.getElementById('rem1').innerText = 'ကျန်ငွေ: ' + (rem1 < 0 ? 0 : rem1.toFixed(2)) + ' ฿';
-        document.getElementById('rem2').innerText = 'ကျန်ငွေ: ' + (rem2 < 0 ? 0 : rem2.toFixed(2)) + ' ฿';
-        document.getElementById('rem3').innerText = 'ကျန်ငွေ: ' + (rem3 < 0 ? 0 : rem3.toFixed(2)) + ' ฿';
-        document.getElementById('rem4').innerText = 'ကျန်ငွေ: ' + (rem4 < 0 ? 0 : rem4.toFixed(2)) + ' ฿';
-        document.getElementById('rem5').innerText = 'ကျန်ငွေ: ' + (rem5 < 0 ? 0 : rem5.toFixed(2)) + ' ฿';
+        document.getElementById('rem1').innerText = 'ကျန်ငွေ: ' + (rem1 < 0 ? 0 : rem1.toFixed(2)) + '  (' + rem1Mmk.toLocaleString() + ' ကျပ်)';
+        document.getElementById('rem2').innerText = 'ကျန်ငွေ: ' + (rem2 < 0 ? 0 : rem2.toFixed(2)) + '  (' + rem2Mmk.toLocaleString() + ' ကျပ်)';
+        document.getElementById('rem3').innerText = 'ကျန်ငွေ: ' + (rem3 < 0 ? 0 : rem3.toFixed(2)) + '  (' + rem3Mmk.toLocaleString() + ' ကျပ်)';
+        document.getElementById('rem4').innerText = 'ကျန်ငွေ: ' + (rem4 < 0 ? 0 : rem4.toFixed(2)) + '  (' + rem4Mmk.toLocaleString() + ' ကျပ်)';
+        document.getElementById('rem5').innerText = 'ကျန်ငွေ: ' + (rem5 < 0 ? 0 : rem5.toFixed(2)) + '  (' + rem5Mmk.toLocaleString() + ' ကျပ်)';
+    }
+
+    function convertThbToMmk() {
+        let rate = getRate();
+        let thb = parseFloat(document.getElementById('thbToMmkInput').value) || 0;
+        let mmk = Math.round(thb * rate);
+        document.getElementById('thbToMmkRes').innerText = '= ' + mmk.toLocaleString() + ' ကျပ်';
+    }
+
+    function convertMmkToThb() {
+        let rate = getRate();
+        let mmk = parseFloat(document.getElementById('mmkToThbInput').value) || 0;
+        let thb = (mmk / rate).toFixed(2);
+        document.getElementById('mmkToThbRes').innerText = '= ' + parseFloat(thb).toLocaleString() + ' ';
     }
 
     function saveRecord() {
         if (!currentUser) return;
 
+        let empType = document.getElementById('empType').value;
+        let empTypeStr = empType === 'monthly' ? 'လခစား' : 'နေ့စား';
+        let period = document.getElementById('payPeriod').value;
+        if (empType === 'daily') {
+            empTypeStr += period === 'p15' ? ' (၁၅ ရက်ထုတ်)' : ' (လကုန်ထုတ်)';
+        }
+
+        let year = document.getElementById('yearSelect').value;
+        let monthSelect = document.getElementById('monthSelect');
+        let monthStr = monthSelect.options[monthSelect.selectedIndex].text;
+
         let dailyRate = document.getElementById('dailyRate').value;
+        let otHours = document.getElementById('otHours').value || 0;
+        let attendance = document.getElementById('attendanceValDisplay').innerText || 0;
+        let tax = document.getElementById('taxAmount').innerText || 0;
+
         let exp = parseFloat(document.getElementById('expInput').value) || 0;
         let emerg = parseFloat(document.getElementById('emergInput').value) || 0;
         let save = parseFloat(document.getElementById('saveInput').value) || 0;
@@ -549,9 +662,13 @@
         let home = parseFloat(document.getElementById('homeInput').value) || 0;
 
         let rec = {
-            id: Date.now(),
             username: currentUser.name,
+            yearMonth: year + ' ' + monthStr,
+            empTypeStr: empTypeStr,
             dailyRate: dailyRate,
+            otHours: otHours,
+            attendance: attendance,
+            tax: tax,
             totalIncome: grandTotalThb,
             exp: exp,
             emerg: emerg,
@@ -561,12 +678,15 @@
             date: new Date().toLocaleDateString('en-GB')
         };
 
-        let records = JSON.parse(localStorage.getItem('records')) || [];
-        records.push(rec);
-        localStorage.setItem('records', JSON.stringify(records));
-
-        alert('စာရင်းများကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီခင်ဗျာ။');
-        goToHistoryPage();
+        const newRecRef = db.ref('records').push();
+        newRecRef.set(rec, err => {
+            if (err) {
+                alert('သိမ်းဆည်းမှု မအောင်မြင်ပါ: ' + err.message);
+            } else {
+                alert('စာရင်းများကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီခင်ဗျာ။');
+                goToHistoryPage();
+            }
+        });
     }
 
     function goToHistoryPage() {
@@ -574,84 +694,169 @@
         document.getElementById('pageHistory').style.display = 'block';
 
         let container = document.getElementById('historyListContainer');
-        container.innerHTML = '';
+        container.innerHTML = '<p style="text-align:center; color:#888;">အချက်အလက်များ ဆွဲယူနေပါသည်...</p>';
 
-        let records = JSON.parse(localStorage.getItem('records')) || [];
-
-        let viewableRecords = [];
-        if (currentUser && currentUser.role === 'admin') {
-            viewableRecords = records;
-            document.getElementById('historyTitle').innerText = 'အကောင့်အားလုံး၏ သိမ်းဆည်းထားသော စာရင်းများ (Admin)';
-        } else if (currentUser) {
-            viewableRecords = records.filter(r => r.username === currentUser.name);
-            document.getElementById('historyTitle').innerText = currentUser.name + ' ၏ သိမ်းဆည်းထားသော စာရင်းများ';
-        } else {
+        if (!currentUser) {
             container.innerHTML = '<p style="text-align:center; color:#888;">Skip အသုံးပြုသူများ စာရင်းကြည့်ခွင့်မရှိပါ။</p>';
             return;
         }
 
-        if (viewableRecords.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:#888;">သိမ်းဆည်းထားသော စာရင်း မရှိသေးပါ။</p>';
-            return;
+        if (currentUser.role === 'admin') {
+            document.getElementById('historyTitle').innerText = 'Registered Users & Saved History (Admin)';
+            loadAdminHistoryView(container);
+        } else {
+            document.getElementById('historyTitle').innerText = currentUser.name + ' ၏ သိမ်းဆည်းထားသော စာရင်းများ';
+            loadUserHistoryView(container);
         }
+    }
 
-        viewableRecords.forEach(r => {
-            let item = document.createElement('div');
-            item.className = 'history-item';
-            
-            let adminBtns = '';
-            if (currentUser && currentUser.role === 'admin') {
-                adminBtns = `
-                    <div>
-                        <button class="btn-warning" onclick="editRecord(${r.id})">Edit</button>
-                        <button class="btn-danger" onclick="deleteRecord(${r.id})">Delete</button>
-                    </div>
-                `;
+    function loadUserHistoryView(container) {
+        db.ref('records').once('value', snapshot => {
+            container.innerHTML = '';
+            let recordsObj = snapshot.val();
+            if (!recordsObj) {
+                container.innerHTML = '<p style="text-align:center; color:#888;">သိမ်းဆည်းထားသော စာရင်း မရှိသေးပါ။</p>';
+                return;
             }
 
-            item.innerHTML = `
-                <h4>👤 ${r.username} (${r.date}) ${adminBtns}</h4>
-                <div><b>• တစ်ရက် လုပ်အားခ:</b> ${r.dailyRate} ฿</div>
-                <div><b>• စုစုပေါင်းရငွေ:</b> <span style="color:#28a745; font-weight:bold;">${r.totalIncome.toLocaleString()} ฿</span></div>
-                <hr style="border:0; border-top:1px dashed #eee; margin:6px 0;">
-                <div>• အထွေထွေစရိတ်: ${r.exp} ฿</div>
-                <div>• အရေးပေါ်သုံးငွေ: ${r.emerg} ฿</div>
-                <div>• စုငွေ: ${r.save} ฿</div>
-                <div>• အပိုအလိုငွေ: ${r.extra} ฿</div>
-                <div>• အိမ်ပို့ငွေ: ${r.home} ฿</div>
-            `;
-            container.appendChild(item);
+            let count = 0;
+            Object.keys(recordsObj).reverse().forEach(key => {
+                let r = recordsObj[key];
+                if (r.username === currentUser.name) {
+                    count++;
+                    container.appendChild(renderHistoryCard(key, r, false));
+                }
+            });
+
+            if (count === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#888;">သိမ်းဆည်းထားသော စာရင်း မရှိသေးပါ။</p>';
+            }
         });
     }
 
-    function deleteRecord(id) {
-        if (confirm('ဒီစာရင်းကို ဖျက်ရန် သေချာပါသလား?')) {
-            let records = JSON.parse(localStorage.getItem('records')) || [];
-            records = records.filter(r => r.id !== id);
-            localStorage.setItem('records', JSON.stringify(records));
-            goToHistoryPage();
+    function loadAdminHistoryView(container) {
+        db.ref('users').once('value', userSnap => {
+            let usersObj = userSnap.val() || {};
+            db.ref('records').once('value', recSnap => {
+                container.innerHTML = '';
+                let recordsObj = recSnap.val() || {};
+
+                Object.keys(usersObj).forEach(uName => {
+                    let accDiv = document.createElement('div');
+                    accDiv.className = 'user-accordion';
+
+                    let userRecs = [];
+                    Object.keys(recordsObj).reverse().forEach(k => {
+                        if (recordsObj[k].username === uName) {
+                            userRecs.push({ key: k, data: recordsObj[k] });
+                        }
+                    });
+
+                    let userPass = usersObj[uName].pass || 'မသိရှိပါ';
+
+                    accDiv.innerHTML = `
+                        <div class="user-accordion-header" onclick="toggleAccordion('${uName}')">
+                            <span> ${uName} ${usersObj[uName].role === 'admin' ? '(Admin)' : ''}</span>
+                            <span style="font-size:12px;">(စာရင်း ${userRecs.length} ခု) </span>
+                        </div>
+                        <div class="user-accordion-body" id="acc_body_${uName}">
+                            <div class="user-info-banner"> Password: <u>${userPass}</u></div>
+                        </div>
+                    `;
+
+                    container.appendChild(accDiv);
+
+                    let bodyDiv = document.getElementById(`acc_body_${uName}`);
+                    if (userRecs.length === 0) {
+                        let emptyMsg = document.createElement('p');
+                        emptyMsg.style.cssText = 'color:#888; font-size:12px; margin:5px 0;';
+                        emptyMsg.innerText = 'သိမ်းထားသော စာရင်းမရှိပါ။';
+                        bodyDiv.appendChild(emptyMsg);
+                    } else {
+                        userRecs.forEach(item => {
+                            bodyDiv.appendChild(renderHistoryCard(item.key, item.data, true));
+                        });
+                    }
+                });
+            });
+        });
+    }
+
+    function toggleAccordion(uName) {
+        let el = document.getElementById(`acc_body_${uName}`);
+        if (el.style.display === 'block') {
+            el.style.display = 'none';
+        } else {
+            el.style.display = 'block';
         }
     }
 
-    function editRecord(id) {
-        let records = JSON.parse(localStorage.getItem('records')) || [];
-        let rec = records.find(r => r.id === id);
-        if (!rec) return;
+    function renderHistoryCard(key, r, isAdmin) {
+        let item = document.createElement('div');
+        item.className = 'history-item';
 
-        let newTotal = prompt("စုစုပေါင်းရငွေ ပြင်မည်:", rec.totalIncome);
-        let newExp = prompt("အထွေထွေစရိတ် ပြင်မည်:", rec.exp);
-        let newHome = prompt("အိမ်ပို့ငွေ ပြင်မည်:", rec.home);
+        let adminBtns = '';
+        if (isAdmin) {
+            adminBtns = `
+                <div>
+                    <button class="btn-warning" onclick="editRecord('${key}')">Edit</button>
+                    <button class="btn-danger" onclick="deleteRecord('${key}')">Delete</button>
+                </div>
+            `;
+        }
 
-        if (newTotal !== null) rec.totalIncome = parseFloat(newTotal) || 0;
-        if (newExp !== null) rec.exp = parseFloat(newExp) || 0;
-        if (newHome !== null) rec.home = parseFloat(newHome) || 0;
+        item.innerHTML = `
+            <h4> ${r.yearMonth || 'စာရင်း'} (${r.date}) ${adminBtns}</h4>
+            <div><b>အမျိုးအစား:</b> ${r.empTypeStr || 'လခစား'}</div>
+            <div><b>တစ်ရက် လုပ်အားခ:</b> ${r.dailyRate} </div>
+            <div><b>OT နာရီ:</b> ${r.otHours || 0} hr | <b>ရက်မှန်ကြေး:</b> ${r.attendance || 0} </div>
+            <div><b>ပကန်ဆခွန်:</b> -${r.tax || 0} </div>
+            <div><b>စုစုပေါင်းရငွေ:</b> <span style="color:#28a745; font-weight:bold;">${parseFloat(r.totalIncome).toLocaleString()} </span></div>
+            <hr style="border:0; border-top:1px dashed #eee; margin:6px 0;">
+            <div style="font-size:12px; color:#555;">
+                <div> အထွေထွေစရိတ်: ${r.exp} </div>
+                <div> အရေးပေါ်သုံးငွေ: ${r.emerg} </div>
+                <div> စုငွေ: ${r.save} </div>
+                <div> အပိုအလိုငွေ: ${r.extra} </div>
+                <div> အိမ်ပို့ငွေ: ${r.home} </div>
+            </div>
+        `;
+        return item;
+    }
 
-        localStorage.setItem('records', JSON.stringify(records));
-        alert('စာရင်း ပြင်ဆင်ပြီးပါပြီ။');
-        goToHistoryPage();
+    function deleteRecord(key) {
+        if (confirm('ဒီစာရင်းကို ဖျက်ရန် သေချာပါသလား?')) {
+            db.ref('records/' + key).remove(err => {
+                if (err) alert('ဖျက်ခြင်း မအောင်မြင်ပါ: ' + err.message);
+                else goToHistoryPage();
+            });
+        }
+    }
+
+    function editRecord(key) {
+        db.ref('records/' + key).once('value', snapshot => {
+            let rec = snapshot.val();
+            if (!rec) return;
+
+            let newTotal = prompt("စုစုပေါင်းရငွေ ပြင်မည်:", rec.totalIncome);
+            let newExp = prompt("အထွေထွေစရိတ် ပြင်မည်:", rec.exp);
+            let newHome = prompt("အိမ်ပို့ငွေ ပြင်မည်:", rec.home);
+
+            let updates = {};
+            if (newTotal !== null) updates.totalIncome = parseFloat(newTotal) || 0;
+            if (newExp !== null) updates.exp = parseFloat(newExp) || 0;
+            if (newHome !== null) updates.home = parseFloat(newHome) || 0;
+
+            db.ref('records/' + key).update(updates, err => {
+                if (err) alert('ပြင်ဆင်မှု မအောင်မြင်ပါ: ' + err.message);
+                else {
+                    alert('စာရင်း ပြင်ဆင်ပြီးပါပြီ။');
+                    goToHistoryPage();
+                }
+            });
+        });
     }
 </script>
 
 </body>
 </html>
-
