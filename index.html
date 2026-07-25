@@ -8,20 +8,19 @@
         body { font-family: sans-serif; background: #f4f6f9; padding: 15px; margin: 0; }
         .card { background: white; padding: 20px; border-radius: 12px; max-width: 420px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        /* အပေါ်ဆုံး Refresh သတိပေးစာ */
         .top-notice { font-size: 11px; color: #d9534f; text-align: center; margin-bottom: 8px; font-weight: bold; }
-
-        /* ခေါင်းစဉ်နှင့် အန်နီမေးရှင်း */
         .header-box { position: relative; text-align: center; margin-bottom: 15px; }
         h2 { color: #333; margin: 0; font-size: 20px; }
+        h3 { color: #007bff; margin: 5px 0 15px 0; font-size: 16px; text-align: center; }
         
+        .user-badge {
+            background: #e7f3ff; color: #007bff; padding: 6px 12px; border-radius: 20px;
+            font-size: 13px; font-weight: bold; display: inline-block; margin-bottom: 10px; border: 1px solid #b6d4fe;
+        }
+
         .animated-text { 
-            font-size: 12px; 
-            color: #007bff; 
-            margin-top: 5px; 
-            font-weight: bold;
-            display: inline-block;
-            animation: moveSide 2s infinite alternate ease-in-out; 
+            font-size: 12px; color: #007bff; margin-top: 5px; font-weight: bold;
+            display: inline-block; animation: moveSide 2s infinite alternate ease-in-out; 
         }
 
         @keyframes moveSide {
@@ -29,114 +28,94 @@
             100% { transform: translateX(8px); }
         }
 
-        /* ဘတ်ဈေး ထည့်သည့်အကွက် (ညာဘက်အောက်) */
-        .rate-container-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            margin-top: 8px;
-        }
-        .rate-hint {
-            font-size: 10px;
-            color: #d9534f;
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-        .rate-container {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #495057;
-        }
-        .rate-input {
-            width: 80px !important;
-            padding: 4px 8px !important;
-            font-size: 13px !important;
-            margin-top: 0 !important;
-            text-align: center;
-            border: 1px solid #007bff !important;
-        }
+        .rate-container-wrapper { display: flex; flex-direction: column; align-items: flex-end; margin-top: 8px; }
+        .rate-hint { font-size: 10px; color: #d9534f; font-weight: bold; margin-bottom: 2px; }
+        .rate-container { display: flex; justify-content: flex-end; align-items: center; gap: 6px; font-size: 12px; font-weight: bold; color: #495057; }
+        .rate-input { width: 80px !important; padding: 4px 8px !important; font-size: 13px !important; margin-top: 0 !important; text-align: center; border: 1px solid #007bff !important; }
 
         label { font-weight: bold; color: #555; display: block; margin-top: 12px; font-size: 14px; }
         select, input { width: 100%; padding: 10px; font-size: 15px; margin-top: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
-        button { width: 100%; padding: 12px; background: #007bff; color: white; font-size: 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .btn-back { background: #6c757d; margin-top: 15px; }
+        
+        button { width: 100%; padding: 12px; background: #007bff; color: white; font-size: 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .btn-secondary { background: #6c757d; }
+        .btn-success { background: #28a745; }
+        .btn-danger { background: #dc3545; padding: 6px 10px; font-size: 12px; margin-top: 0; width: auto; }
+        .btn-warning { background: #ffc107; color: #000; padding: 6px 10px; font-size: 12px; margin-top: 0; width: auto; }
+        .btn-skip { background: transparent; color: #6c757d; border: 1px solid #6c757d; margin-top: 10px; }
+
         .info-box { background: #e9ecef; padding: 12px; border-radius: 6px; margin-top: 10px; font-size: 14px; color: #495057; }
         .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .sub-mmk { font-size: 12px; color: #6c757d; text-align: right; margin-top: -2px; }
+        
         .total-header { background: #007bff; color: white; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 15px; }
-        .total-header h3 { margin: 0; font-size: 18px; }
+        .total-header h3 { margin: 0; font-size: 18px; color: white; }
         .total-header p { margin: 4px 0 0; font-size: 13px; opacity: 0.9; }
-        .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
-        .title { font-size: 14px; color: #333; }
-        .amt-box { text-align: right; }
-        .amt-thb { font-weight: bold; color: #28a745; font-size: 15px; }
-        .amt-mmk { font-size: 11px; color: #6c757d; margin-top: 2px; }
 
-        /* ဒုတိယစာမျက်နှာ ငွေလဲတွက်စက်ဒီဇိုင်း */
-        .converter-box {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        .converter-box h4 {
-            margin: 0 0 5px 0;
-            color: #007bff;
-            font-size: 15px;
-            text-align: center;
-        }
-        .rate-badge {
-            text-align: center;
-            font-size: 12px;
-            color: #6c757d;
-            font-weight: bold;
-            margin-bottom: 12px;
-            background: #e9ecef;
-            padding: 4px;
-            border-radius: 4px;
-        }
-        .calc-group {
-            margin-bottom: 12px;
-        }
-        .calc-group label {
-            font-size: 12px;
-            margin-top: 0;
-            color: #333;
-        }
-        .calc-result {
-            font-size: 13px;
-            font-weight: bold;
-            color: #28a745;
-            margin-top: 4px;
-            text-align: right;
-        }
+        .rem-hint { font-size: 11px; color: #888; text-align: right; margin-top: 2px; font-weight: normal; }
 
-        .date-select-container {
-            display: flex;
-            gap: 10px;
-        }
+        /* Auth Tabs */
+        .tab-box { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 10px; background: #e9ecef; color: #333; border-radius: 6px; text-align: center; font-weight: bold; cursor: pointer; }
+        .tab-btn.active { background: #007bff; color: white; }
 
+        /* History Card */
+        .history-item { background: #fff; border: 1px solid #ddd; padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
+        .history-item h4 { margin: 0 0 8px 0; color: #007bff; font-size: 15px; border-bottom: 1px solid #eee; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+
+        .date-select-container { display: flex; gap: 10px; }
         .footer-credits { text-align: center; font-size: 13px; color: #888; font-weight: bold; margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ddd; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <!-- အပေါ်ဆုံး သတိပေးစာ -->
     <div class="top-notice">⚠️ အသုံးပြုခါနီးတိုင်း Update ဖြစ်နေအောင် Refresh လုပ်ပေးပါ</div>
 
-    <!-- စာမျက်နှာ (၁) -->
-    <div id="page1">
+    <!-- ---------------- စာမျက်နှာ (၀) - LOGIN / REGISTER ---------------- -->
+    <div id="pageAuth">
         <div class="header-box">
+            <h2>အကောင့်ဝင်ရန် / သစ်ပင်ပြုလုပ်ရန်</h2>
+            <div class="animated-text">မင်္ဂလာပါ၊ ကြိုဆိုပါတယ်</div>
+        </div>
+
+        <div class="tab-box">
+            <div class="tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">Login</div>
+            <div class="tab-btn" id="tabRegBtn" onclick="switchAuthTab('reg')">Register</div>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="loginForm">
+            <label>အသုံးပြုသူ နာမည် (ENG စာလုံးကြီး):</label>
+            <input type="text" id="loginName" placeholder="ဥပမာ - YEMINHTUT1315" oninput="this.value = this.value.toUpperCase()">
+
+            <label>Password (ဂဏန်း ၆ လုံး):</label>
+            <input type="password" id="loginPass" maxlength="6" placeholder="******">
+
+            <button onclick="handleLogin()">Login ဝင်မည်</button>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="regForm" style="display:none;">
+            <label>အသုံးပြုသူ နာမည် (ENG စာလုံးကြီး):</label>
+            <input type="text" id="regName" placeholder="ဥပမာ - KHAING123" oninput="this.value = this.value.toUpperCase()">
+
+            <label>Password (ဂဏန်း ၆ လုံး):</label>
+            <input type="password" id="regPass" maxlength="6" placeholder="ဂဏန်း ၆ လုံး ထည့်ပါ">
+
+            <button class="btn-success" onclick="handleRegister()">Register အကောင့်သစ်ဖွင့်မည်</button>
+        </div>
+
+        <button class="btn-skip" onclick="skipAuth()">Login မဝင်ဘဲ တိုက်ရိုက်အသုံးပြုမည် (Skip)</button>
+        <div class="footer-credits">Designed By Ye Min Htut</div>
+    </div>
+
+    <!-- ---------------- စာမျက်နှာ (၁) - လစာနှင့် OT တွက်စက် ---------------- -->
+    <div id="page1" style="display:none;">
+        <div class="header-box">
+            <div id="currentUserDisplay"></div>
             <h2>၁။ လစာနှင့် OT တွက်ချက်ရန်</h2>
             <div class="animated-text">အသုံးပြုသူတိုင်းအဆင်ပြေကြပါစေ</div>
             
-            <!-- ဘတ်ဈေး ထည့်ရန် အကွက် နှင့် သတိပေးစာ -->
             <div class="rate-container-wrapper">
                 <span class="rate-hint">(ဒီနေ့ပေါက်ဈေးရိုက်ထည့်ပါ)</span>
                 <div class="rate-container">
@@ -152,7 +131,6 @@
             <option value="daily">နေ့စား</option>
         </select>
 
-        <!-- ခုနှစ် နှင့် လ ရွေးချယ်ရန် -->
         <label>ခုနှစ် နှင့် လ ရွေးချယ်ပါ:</label>
         <div class="date-select-container">
             <select id="yearSelect" onchange="calculateSalary()" style="width: 40%;">
@@ -181,7 +159,6 @@
             </select>
         </div>
 
-        <!-- နေ့စား သီးသန့် ရွေးချယ်ရန် -->
         <div id="dailyPeriodBox" style="display:none;">
             <label for="payPeriod">နေ့စား ထုတ်ရက် ရွေးပါ:</label>
             <select id="payPeriod" onchange="toggleEmpType()">
@@ -205,7 +182,6 @@
             <div class="sub-mmk" id="baseSalaryMmk">(0 ကျပ်)</div>
         </div>
 
-        <!-- ပကန်ဆခွန် နှုတ်ငွေ -->
         <div id="taxBox" class="info-box" style="background:#fff3cd; color:#856404;">
             <div class="info-row">
                 <span>ပကန်ဆခွန် နှုတ်ငွေ:</span>
@@ -229,7 +205,6 @@
             <div class="sub-mmk" id="otPayMmk">(0 ကျပ်)</div>
         </div>
 
-        <!-- ရက်မှန်ကြေး ရွေးချယ်မှု -->
         <div id="attendanceContainer">
             <label for="attendanceBonusSelect">ရက်မှန်ကြေး ရွေးပါ (ဘတ်):</label>
             <select id="attendanceBonusSelect" onchange="calculateSalary()">
@@ -257,11 +232,12 @@
         </div>
 
         <button onclick="goToPage2()">Next (ဒုတိယစာမျက်နှာသို့) ➔</button>
+        <button class="btn-secondary" onclick="logout()">Logout / ပြန်ထွက်မည်</button>
 
         <div class="footer-credits">Designed By Ye Min Htut</div>
     </div>
 
-    <!-- စာမျက်နှာ (၂) -->
+    <!-- ---------------- စာမျက်နှာ (၂) - ဘတ်ဂျက် ခွဲဝေမှု ---------------- -->
     <div id="page2" style="display:none;">
         <h2>၂။ ဝင်ငွေ ခွဲဝေမှု စာရင်း</h2>
 
@@ -270,65 +246,143 @@
             <p id="totalHeaderMmk">(0 ကျပ်)</p>
         </div>
 
-        <div class="row">
-            <span class="title">အထွေထွေစရိတ် (60%)</span>
-            <div class="amt-box">
-                <div class="amt-thb" id="exp-thb">0 ฿</div>
-                <div class="amt-mmk" id="exp-mmk">(0 ကျပ်)</div>
-            </div>
-        </div>
-        <div class="row">
-            <span class="title">အရေးပေါ်သုံးငွေ (10%)</span>
-            <div class="amt-box">
-                <div class="amt-thb" id="emerg-thb">0 ฿</div>
-                <div class="amt-mmk" id="emerg-mmk">(0 ကျပ်)</div>
-            </div>
-        </div>
-        <div class="row">
-            <span class="title">စုငွေ (20%)</span>
-            <div class="amt-box">
-                <div class="amt-thb" id="save-thb">0 ฿</div>
-                <div class="amt-mmk" id="save-mmk">(0 ကျပ်)</div>
-            </div>
-        </div>
-        <div class="row">
-            <span class="title">အပိုအလိုငွေ (10%)</span>
-            <div class="amt-box">
-                <div class="amt-thb" id="extra-thb">0 ฿</div>
-                <div class="amt-mmk" id="extra-mmk">(0 ကျပ်)</div>
-            </div>
+        <label>အထွေထွေစရိတ် (ဘတ်):</label>
+        <input type="number" id="expInput" placeholder="0" oninput="calculateBudgetSplit()">
+        <div class="rem-hint" id="rem1">ကျန်ငွေ: 0 ฿</div>
+
+        <label>အရေးပေါ်သုံးငွေ (ဘတ်):</label>
+        <input type="number" id="emergInput" placeholder="0" oninput="calculateBudgetSplit()">
+        <div class="rem-hint" id="rem2">ကျန်ငွေ: 0 ฿</div>
+
+        <label>စုငွေ (ဘတ်):</label>
+        <input type="number" id="saveInput" placeholder="0" oninput="calculateBudgetSplit()">
+        <div class="rem-hint" id="rem3">ကျန်ငွေ: 0 ฿</div>
+
+        <label>အပိုအလိုငွေ (ဘတ်):</label>
+        <input type="number" id="extraInput" placeholder="0" oninput="calculateBudgetSplit()">
+        <div class="rem-hint" id="rem4">ကျန်ငွေ: 0 ฿</div>
+
+        <label>အိမ်ပို့ငွေ (ဘတ်):</label>
+        <input type="number" id="homeInput" placeholder="0" oninput="calculateBudgetSplit()">
+        <div class="rem-hint" id="rem5">ကျန်ငွေ: 0 ฿</div>
+
+        <div id="submitContainer" style="display:none;">
+            <button class="btn-success" onclick="saveRecord()">သိမ်းဆည်းရန် (Submit)</button>
         </div>
 
-        <!-- 🧮 ငွေလဲနှုန်း သီးသန့်တွက်စက် (Converter) -->
-        <div class="converter-box">
-            <h4>🧮 မြန်မာကျပ် ↔ ထိုင်းဘတ် သီးသန့်တွက်စက်</h4>
-            <div class="rate-badge" id="converterRateDisplay">လက်ရှိ ပေါက်ဈေး: ၁ သိန်း = 780 ฿</div>
+        <button class="btn-secondary" onclick="goToHistoryPage()">Saved History (သိမ်းဆည်းထားသည်များကြည့်ရန်)</button>
+        <button class="btn-secondary" onclick="goToPage1()" style="margin-top:8px;">⬅ Back (ရှေ့သို့ပြန်သွားရန်)</button>
 
-            <!-- ကျပ် မှ ဘတ် -->
-            <div class="calc-group">
-                <label for="inputMmk">မြန်မာကျပ် ထည့်ပါ:</label>
-                <input type="number" id="inputMmk" placeholder="ဥပမာ - 100000" oninput="convertMmkToThb()">
-                <div class="calc-result" id="resultThb">0 ฿</div>
-            </div>
+        <div class="footer-credits">Designed By Ye Min Htut</div>
+    </div>
 
-            <hr style="border: 0; border-top: 1px dashed #ccc; margin: 10px 0;">
+    <!-- ---------------- စာမျက်နှာ (၃) - SAVED HISTORY ---------------- -->
+    <div id="pageHistory" style="display:none;">
+        <h2 id="historyTitle">သိမ်းဆည်းထားသည့် စာရင်းများ</h2>
+        <br>
+        <div id="historyListContainer"></div>
 
-            <!-- ဘတ် မှ ကျပ် -->
-            <div class="calc-group">
-                <label for="inputThb">ထိုင်းဘတ် ထည့်ပါ:</label>
-                <input type="number" id="inputThb" placeholder="ဥပမာ - 1000" oninput="convertThbToMmk()">
-                <div class="calc-result" id="resultMmk">0 ကျပ်</div>
-            </div>
-        </div>
-
-        <button class="btn-back" onclick="goToPage1()">⬅ Back (ရှေ့သို့ပြန်သွားရန်)</button>
-
+        <button class="btn-secondary" onclick="goToPage2()">⬅ Back (ခွဲဝေမှု စာမျက်နှာသို့)</button>
         <div class="footer-credits">Designed By Ye Min Htut</div>
     </div>
 </div>
 
 <script>
+    // System Global Variables
+    let currentUser = null; 
     let grandTotalThb = 0;
+
+    // Default Admin setup
+    function initDatabase() {
+        if (!localStorage.getItem('users')) {
+            let users = {};
+            users['YEMINHTUT1315'] = { pass: '240173', role: 'admin' };
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+        if (!localStorage.getItem('records')) {
+            localStorage.setItem('records', JSON.stringify([]));
+        }
+    }
+    initDatabase();
+
+    function switchAuthTab(tab) {
+        if (tab === 'login') {
+            document.getElementById('tabLoginBtn').classList.add('active');
+            document.getElementById('tabRegBtn').classList.remove('active');
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('regForm').style.display = 'none';
+        } else {
+            document.getElementById('tabRegBtn').classList.add('active');
+            document.getElementById('tabLoginBtn').classList.remove('active');
+            document.getElementById('regForm').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'none';
+        }
+    }
+
+    function handleRegister() {
+        let name = document.getElementById('regName').value.trim().toUpperCase();
+        let pass = document.getElementById('regPass').value.trim();
+
+        if (!name || pass.length !== 6 || isNaN(pass)) {
+            alert('နာမည်ဖြည့်ပါ၊ Password ကို ဂဏန်း ၆ လုံး ကိန်းဂဏန်းသီးသန့် ထည့်ပါ။');
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem('users')) || {};
+        if (users[name]) {
+            alert('ဤနာမည်ဖြင့် Register လုပ်ပြီးသားရှိနေပါသည်။ အခြားနာမည်ပြောင်းပါ။');
+            return;
+        }
+
+        users[name] = { pass: pass, role: 'user' };
+        localStorage.setItem('users', JSON.stringify(users));
+
+        alert('Register အကောင့်အောင်မြင်စွာ ပြုလုပ်ပြီးပါပြီ! Login ဝင်ပါခင်ဗျာ။');
+        document.getElementById('regName').value = '';
+        document.getElementById('regPass').value = '';
+        switchAuthTab('login');
+    }
+
+    function handleLogin() {
+        let name = document.getElementById('loginName').value.trim().toUpperCase();
+        let pass = document.getElementById('loginPass').value.trim();
+
+        let users = JSON.parse(localStorage.getItem('users')) || {};
+
+        if (users[name] && users[name].pass === pass) {
+            currentUser = { name: name, role: users[name].role };
+            startApp();
+        } else {
+            alert('နာမည် သို့မဟုတ် Password မှားယွင်းနေပါသည်။');
+        }
+    }
+
+    function skipAuth() {
+        currentUser = null;
+        startApp();
+    }
+
+    function startApp() {
+        document.getElementById('pageAuth').style.display = 'none';
+        document.getElementById('page1').style.display = 'block';
+
+        if (currentUser) {
+            document.getElementById('currentUserDisplay').innerHTML = `<div class="user-badge">👤 ${currentUser.name} ${currentUser.role === 'admin' ? '(Admin)' : ''}</div>`;
+            document.getElementById('submitContainer').style.display = 'block';
+        } else {
+            document.getElementById('currentUserDisplay').innerHTML = '';
+            document.getElementById('submitContainer').style.display = 'none';
+        }
+        toggleEmpType();
+    }
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('page1').style.display = 'none';
+        document.getElementById('page2').style.display = 'none';
+        document.getElementById('pageHistory').style.display = 'none';
+        document.getElementById('pageAuth').style.display = 'block';
+    }
 
     function getRate() {
         let thbVal = parseFloat(document.getElementById('exchangeRate').value) || 780;
@@ -362,9 +416,7 @@
         let count = 0;
         let cur = new Date(startDate);
         while (cur <= endDate) {
-            if (!skipSundays || cur.getDay() !== 0) { 
-                count++;
-            }
+            if (!skipSundays || cur.getDay() !== 0) { count++; }
             cur.setDate(cur.getDate() + 1);
         }
         return count;
@@ -377,26 +429,20 @@
         let m = parseInt(document.getElementById('monthSelect').value);
         let dailyRate = parseFloat(document.getElementById('dailyRate').value) || 0;
         
-        let days = 0;
-        let baseSalary = 0;
+        let days = 0, baseSalary = 0;
 
         if (empType === 'monthly') {
-            let prevMonth = m - 1;
-            let prevYear = year;
+            let prevMonth = m - 1, prevYear = year;
             if (prevMonth === 0) { prevMonth = 12; prevYear = year - 1; }
-
             let startDate = new Date(prevYear, prevMonth - 1, 21);
             let endDate = new Date(year, m - 1, 20);
-
             days = countWorkingDays(startDate, endDate, false);
             baseSalary = days * dailyRate;
         } else {
             let period = document.getElementById('payPeriod').value;
             let startDate, endDate;
-
             if (period === 'p15') { 
-                let prevMonth = m - 1;
-                let prevYear = year;
+                let prevMonth = m - 1, prevYear = year;
                 if (prevMonth === 0) { prevMonth = 12; prevYear = year - 1; }
                 startDate = new Date(prevYear, prevMonth - 1, 21);
                 endDate = new Date(year, m - 1, 5);
@@ -404,7 +450,6 @@
                 startDate = new Date(year, m - 1, 6);
                 endDate = new Date(year, m - 1, 20);
             }
-
             days = countWorkingDays(startDate, endDate, true);
             baseSalary = days * dailyRate;
         }
@@ -416,7 +461,6 @@
 
         let curAttendance = 0;
         let period = document.getElementById('payPeriod').value;
-
         if (empType === 'monthly' || (empType === 'daily' && period === 'pend')) {
             curAttendance = parseFloat(document.getElementById('attendanceBonusSelect').value) || 0;
         }
@@ -452,33 +496,17 @@
             alert('ကျေးဇူးပြု၍ ဝင်ငွေ တွက်ချက်ပါ');
             return;
         }
-
-        let thbVal = parseFloat(document.getElementById('exchangeRate').value) || 780;
         let rate = getRate();
         let totalMmk = grandTotalThb * rate;
-
-        document.getElementById('converterRateDisplay').innerText = 'လက်ရှိ ပေါက်ဈေး: ၁ သိန်း = ' + thbVal + ' ฿';
 
         document.getElementById('totalHeaderThb').innerText = 'စုစုပေါင်း: ' + grandTotalThb.toLocaleString('en-US', {maximumFractionDigits:2}) + ' ฿';
         document.getElementById('totalHeaderMmk').innerText = '(' + Math.round(totalMmk).toLocaleString() + ' ကျပ်)';
 
-        function setVal(idThb, idMmk, percent) {
-            let valThb = grandTotalThb * percent;
-            let valMmk = valThb * rate;
-            document.getElementById(idThb).innerText = valThb.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ฿';
-            document.getElementById(idMmk).innerText = '(' + Math.round(valMmk).toLocaleString() + ' ကျပ်)';
-        }
-
-        setVal('exp-thb', 'exp-mmk', 0.60);
-        setVal('emerg-thb', 'emerg-mmk', 0.10);
-        setVal('save-thb', 'save-mmk', 0.20);
-        setVal('extra-thb', 'extra-mmk', 0.10);
-
-        convertMmkToThb();
-        convertThbToMmk();
-
         document.getElementById('page1').style.display = 'none';
         document.getElementById('page2').style.display = 'block';
+        document.getElementById('pageHistory').style.display = 'none';
+
+        calculateBudgetSplit();
     }
 
     function goToPage1() {
@@ -486,21 +514,142 @@
         document.getElementById('page1').style.display = 'block';
     }
 
-    function convertMmkToThb() {
-        let mmk = parseFloat(document.getElementById('inputMmk').value) || 0;
-        let thbRate = parseFloat(document.getElementById('exchangeRate').value) || 780;
-        let thbResult = (mmk / 100000) * thbRate;
-        document.getElementById('resultThb').innerText = thbResult.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ฿';
+    function calculateBudgetSplit() {
+        let exp = parseFloat(document.getElementById('expInput').value) || 0;
+        let emerg = parseFloat(document.getElementById('emergInput').value) || 0;
+        let save = parseFloat(document.getElementById('saveInput').value) || 0;
+        let extra = parseFloat(document.getElementById('extraInput').value) || 0;
+        let home = parseFloat(document.getElementById('homeInput').value) || 0;
+
+        let rem1 = grandTotalThb - exp;
+        let rem2 = rem1 - emerg;
+        let rem3 = rem2 - save;
+        let rem4 = rem3 - extra;
+        let rem5 = rem4 - home;
+
+        if (rem5 < 0) {
+            alert('စုစုပေါင်း ရရှိငွေထက် ပိုမိုသုံးစွဲ၍ မရပါခင်ဗျာ။');
+        }
+
+        document.getElementById('rem1').innerText = 'ကျန်ငွေ: ' + (rem1 < 0 ? 0 : rem1.toFixed(2)) + ' ฿';
+        document.getElementById('rem2').innerText = 'ကျန်ငွေ: ' + (rem2 < 0 ? 0 : rem2.toFixed(2)) + ' ฿';
+        document.getElementById('rem3').innerText = 'ကျန်ငွေ: ' + (rem3 < 0 ? 0 : rem3.toFixed(2)) + ' ฿';
+        document.getElementById('rem4').innerText = 'ကျန်ငွေ: ' + (rem4 < 0 ? 0 : rem4.toFixed(2)) + ' ฿';
+        document.getElementById('rem5').innerText = 'ကျန်ငွေ: ' + (rem5 < 0 ? 0 : rem5.toFixed(2)) + ' ฿';
     }
 
-    function convertThbToMmk() {
-        let thb = parseFloat(document.getElementById('inputThb').value) || 0;
-        let rate = getRate();
-        let mmkResult = thb * rate;
-        document.getElementById('resultMmk').innerText = Math.round(mmkResult).toLocaleString() + ' ကျပ်';
+    function saveRecord() {
+        if (!currentUser) return;
+
+        let dailyRate = document.getElementById('dailyRate').value;
+        let exp = parseFloat(document.getElementById('expInput').value) || 0;
+        let emerg = parseFloat(document.getElementById('emergInput').value) || 0;
+        let save = parseFloat(document.getElementById('saveInput').value) || 0;
+        let extra = parseFloat(document.getElementById('extraInput').value) || 0;
+        let home = parseFloat(document.getElementById('homeInput').value) || 0;
+
+        let rec = {
+            id: Date.now(),
+            username: currentUser.name,
+            dailyRate: dailyRate,
+            totalIncome: grandTotalThb,
+            exp: exp,
+            emerg: emerg,
+            save: save,
+            extra: extra,
+            home: home,
+            date: new Date().toLocaleDateString('en-GB')
+        };
+
+        let records = JSON.parse(localStorage.getItem('records')) || [];
+        records.push(rec);
+        localStorage.setItem('records', JSON.stringify(records));
+
+        alert('စာရင်းများကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီခင်ဗျာ။');
+        goToHistoryPage();
     }
 
-    toggleEmpType();
+    function goToHistoryPage() {
+        document.getElementById('page2').style.display = 'none';
+        document.getElementById('pageHistory').style.display = 'block';
+
+        let container = document.getElementById('historyListContainer');
+        container.innerHTML = '';
+
+        let records = JSON.parse(localStorage.getItem('records')) || [];
+
+        let viewableRecords = [];
+        if (currentUser && currentUser.role === 'admin') {
+            viewableRecords = records;
+            document.getElementById('historyTitle').innerText = 'အကောင့်အားလုံး၏ သိမ်းဆည်းထားသော စာရင်းများ (Admin)';
+        } else if (currentUser) {
+            viewableRecords = records.filter(r => r.username === currentUser.name);
+            document.getElementById('historyTitle').innerText = currentUser.name + ' ၏ သိမ်းဆည်းထားသော စာရင်းများ';
+        } else {
+            container.innerHTML = '<p style="text-align:center; color:#888;">Skip အသုံးပြုသူများ စာရင်းကြည့်ခွင့်မရှိပါ။</p>';
+            return;
+        }
+
+        if (viewableRecords.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#888;">သိမ်းဆည်းထားသော စာရင်း မရှိသေးပါ။</p>';
+            return;
+        }
+
+        viewableRecords.forEach(r => {
+            let item = document.createElement('div');
+            item.className = 'history-item';
+            
+            let adminBtns = '';
+            if (currentUser && currentUser.role === 'admin') {
+                adminBtns = `
+                    <div>
+                        <button class="btn-warning" onclick="editRecord(${r.id})">Edit</button>
+                        <button class="btn-danger" onclick="deleteRecord(${r.id})">Delete</button>
+                    </div>
+                `;
+            }
+
+            item.innerHTML = `
+                <h4>👤 ${r.username} (${r.date}) ${adminBtns}</h4>
+                <div><b>• တစ်ရက် လုပ်အားခ:</b> ${r.dailyRate} ฿</div>
+                <div><b>• စုစုပေါင်းရငွေ:</b> <span style="color:#28a745; font-weight:bold;">${r.totalIncome.toLocaleString()} ฿</span></div>
+                <hr style="border:0; border-top:1px dashed #eee; margin:6px 0;">
+                <div>• အထွေထွေစရိတ်: ${r.exp} ฿</div>
+                <div>• အရေးပေါ်သုံးငွေ: ${r.emerg} ฿</div>
+                <div>• စုငွေ: ${r.save} ฿</div>
+                <div>• အပိုအလိုငွေ: ${r.extra} ฿</div>
+                <div>• အိမ်ပို့ငွေ: ${r.home} ฿</div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    function deleteRecord(id) {
+        if (confirm('ဒီစာရင်းကို ဖျက်ရန် သေချာပါသလား?')) {
+            let records = JSON.parse(localStorage.getItem('records')) || [];
+            records = records.filter(r => r.id !== id);
+            localStorage.setItem('records', JSON.stringify(records));
+            goToHistoryPage();
+        }
+    }
+
+    function editRecord(id) {
+        let records = JSON.parse(localStorage.getItem('records')) || [];
+        let rec = records.find(r => r.id === id);
+        if (!rec) return;
+
+        let newTotal = prompt("စုစုပေါင်းရငွေ ပြင်မည်:", rec.totalIncome);
+        let newExp = prompt("အထွေထွေစရိတ် ပြင်မည်:", rec.exp);
+        let newHome = prompt("အိမ်ပို့ငွေ ပြင်မည်:", rec.home);
+
+        if (newTotal !== null) rec.totalIncome = parseFloat(newTotal) || 0;
+        if (newExp !== null) rec.exp = parseFloat(newExp) || 0;
+        if (newHome !== null) rec.home = parseFloat(newHome) || 0;
+
+        localStorage.setItem('records', JSON.stringify(records));
+        alert('စာရင်း ပြင်ဆင်ပြီးပါပြီ။');
+        goToHistoryPage();
+    }
 </script>
 
 </body>
