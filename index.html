@@ -40,7 +40,7 @@
         .rate-input { width: 85px !important; padding: 6px 8px !important; font-size: 14px !important; margin-top: 0 !important; text-align: center; border: 1.5px solid #007bff !important; border-radius: 6px !important; }
 
         label { font-weight: 600; color: #444; display: block; margin-top: 14px; font-size: 13px; }
-        select, input[type="text"], input[type="number"], input[type="password"] { 
+        select, input[type="text"], input[type="number"], input[type="password"], input[type="date"] { 
             width: 100%; padding: 12px; font-size: 15px; margin-top: 6px; border: 1px solid #ccc; border-radius: 8px; background-color: #fafafa;
         }
         select:focus, input:focus { outline: none; border-color: #007bff; background-color: #fff; }
@@ -53,6 +53,7 @@
         button:active { transform: scale(0.99); }
         .btn-secondary { background: #6c757d; }
         .btn-success { background: #28a745; }
+        .btn-info { background: #17a2b8; }
         .btn-danger { background: #dc3545; padding: 6px 10px; font-size: 12px; margin-top: 0; width: auto; border-radius: 4px; }
         .btn-warning { background: #ffc107; color: #000; padding: 6px 10px; font-size: 12px; margin-top: 0; width: auto; border-radius: 4px; }
         .btn-skip { background: transparent; color: #6c757d; border: 1px solid #6c757d; margin-top: 12px; }
@@ -86,6 +87,12 @@
 
         .date-select-container { display: flex; gap: 10px; }
         .footer-credits { text-align: center; font-size: 12px; color: #888; font-weight: bold; margin-top: 20px; padding-top: 10px; border-top: 1px dashed #ddd; }
+
+        /* Dynamic Row Style */
+        .expense-row { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+        .expense-row input[type="text"] { flex: 2; margin-top: 0; }
+        .expense-row input[type="number"] { flex: 1; margin-top: 0; }
+        .btn-remove-row { background: #dc3545; color: white; width: auto; padding: 10px 12px; margin-top: 0; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -258,6 +265,7 @@
         </div>
 
         <button onclick="goToPage2()">Next (ဒုတိယစာမျက်နှာသို့) </button>
+        <button class="btn-info" onclick="goToDailyExpensePage()" style="margin-top:8px;">တနေ့တာ အသုံးစရိတ် သို့ တိုက်ရိုက်သွားမည် </button>
         <button class="btn-secondary" onclick="logout()">Logout / ပြန်ထွက်မည်</button>
 
         <div class="footer-credits">Designed By Ye Min Htut</div>
@@ -312,8 +320,11 @@
             </div>
         </div>
 
-        <div id="submitContainer" style="display:none;">
-            <button class="btn-success" onclick="saveRecord()">သိမ်းဆည်းရန် (Submit)</button>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <div id="submitContainer" style="flex:1; display:none;">
+                <button class="btn-success" style="margin-top:0;" onclick="saveRecord()">သိမ်းဆည်းရန် (Submit)</button>
+            </div>
+            <button class="btn-info" style="flex:1; margin-top:0;" onclick="goToDailyExpensePage()">Next (တနေ့တာအသုံးစရိတ်) </button>
         </div>
 
         <button class="btn-secondary" onclick="goToHistoryPage()">Saved History (သိမ်းဆည်းထားသည်များကြည့်ရန်)</button>
@@ -322,10 +333,55 @@
         <div class="footer-credits">Designed By Ye Min Htut</div>
     </div>
 
+    <!-- PAGE 2.5 - DAILY EXPENSE (တနေ့တာ အသုံးစရိတ်) -->
+    <div id="pageDailyExpense" style="display:none;">
+        <h2> တနေ့တာ အသုံးစရိတ်</h2>
+
+        <label>ရက်၊ လ၊ ခုနှစ် ရွေးပါ:</label>
+        <input type="date" id="dailyExpenseDate">
+
+        <label>အသုံးစရိတ် မှတ်စု နှင့် ပမာဏ (Baht):</label>
+        <div id="expenseRowsContainer">
+            <div class="expense-row">
+                <input type="text" class="expense-note" placeholder="မှတ်စု (ဥပမာ- ထမင်းဖိုး)">
+                <input type="number" class="expense-amount" placeholder="Baht" oninput="calculateDailyExpenseTotal()">
+            </div>
+        </div>
+
+        <button class="btn-info" onclick="addExpenseRow()">+ Add (မှတ်စု ထပ်တိုးမည်)</button>
+
+        <div class="info-box" style="background:#e8f5e9; border-color:#c8e6c9; margin-top:15px;">
+            <div class="info-row">
+                <span>စုစုပေါင်း ဘတ် (Baht):</span>
+                <div><b id="dailyTotalThb" style="color:#2e7d32;">0</b> </div>
+            </div>
+            <div class="info-row">
+                <span>မြန်မာကျပ်ငွေ (MMK):</span>
+                <div><b id="dailyTotalMmk" style="color:#2e7d32;">0</b> ကျပ်</div>
+            </div>
+            <div class="sub-mmk">(ပေါက်ဈေး ၁ သိန်း = <span id="dailyRateDisplay">780</span> ဘတ်ဖြင့် တွက်ထားပါသည်)</div>
+        </div>
+
+        <div id="dailySubmitContainer" style="display:none;">
+            <button class="btn-success" onclick="saveDailyExpenseRecord()">Submit (တနေ့တာအသုံးစရိတ် သိမ်းမည်)</button>
+        </div>
+
+        <button class="btn-secondary" onclick="goToHistoryPage()">Saved History (သိမ်းဆည်းထားသည်များကြည့်ရန်)</button>
+        <button class="btn-secondary" onclick="goToPage2()" style="margin-top:8px;"> Back (ခွဲဝေမှု စာမျက်နှာသို့)</button>
+        <button class="btn-secondary" onclick="goToPage1()" style="margin-top:8px;"> Home (လစာတွက်ချက်ရန် စာမျက်နှာသို့)</button>
+
+        <div class="footer-credits">Designed By Ye Min Htut</div>
+    </div>
+
     <!-- PAGE 3 - SAVED HISTORY -->
     <div id="pageHistory" style="display:none;">
         <h2 id="historyTitle">သိမ်းဆည်းထားသည့် စာရင်းများ</h2>
-        <br>
+
+        <div class="tab-box" style="margin-top:15px;">
+            <div class="tab-btn active" id="tabSalaryHistBtn" onclick="switchHistoryTab('salary')">လစာ မှတ်တမ်း</div>
+            <div class="tab-btn" id="tabDailyHistBtn" onclick="switchHistoryTab('daily')">တနေ့တာ အသုံးစရိတ်</div>
+        </div>
+
         <div id="historyListContainer"></div>
 
         <button class="btn-secondary" onclick="goToPage2()"> Back (ခွဲဝေမှု စာမျက်နှာသို့)</button>
@@ -350,6 +406,7 @@
 
     let currentUser = null; 
     let grandTotalThb = 0;
+    let currentHistoryTab = 'salary';
 
     function initDatabase() {
         const adminRef = db.ref('users/YEMINHTUT1315');
@@ -443,9 +500,11 @@
         if (currentUser) {
             document.getElementById('currentUserDisplay').innerHTML = `<div class="user-badge"> ${currentUser.name} ${currentUser.role === 'admin' ? '(Admin)' : ''}</div>`;
             document.getElementById('submitContainer').style.display = 'block';
+            document.getElementById('dailySubmitContainer').style.display = 'block';
         } else {
             document.getElementById('currentUserDisplay').innerHTML = '';
             document.getElementById('submitContainer').style.display = 'none';
+            document.getElementById('dailySubmitContainer').style.display = 'none';
         }
         toggleEmpType();
     }
@@ -454,6 +513,7 @@
         currentUser = null;
         document.getElementById('page1').style.display = 'none';
         document.getElementById('page2').style.display = 'none';
+        document.getElementById('pageDailyExpense').style.display = 'none';
         document.getElementById('pageHistory').style.display = 'none';
         document.getElementById('pageAuth').style.display = 'block';
     }
@@ -580,6 +640,7 @@
         document.getElementById('convRateDisp').innerText = rawRate;
 
         document.getElementById('page1').style.display = 'none';
+        document.getElementById('pageDailyExpense').style.display = 'none';
         document.getElementById('page2').style.display = 'block';
         document.getElementById('pageHistory').style.display = 'none';
 
@@ -588,6 +649,8 @@
 
     function goToPage1() {
         document.getElementById('page2').style.display = 'none';
+        document.getElementById('pageDailyExpense').style.display = 'none';
+        document.getElementById('pageHistory').style.display = 'none';
         document.getElementById('page1').style.display = 'block';
     }
 
@@ -636,6 +699,114 @@
         document.getElementById('mmkToThbRes').innerText = '= ' + parseFloat(thb).toLocaleString() + ' ';
     }
 
+    // --- DAILY EXPENSE FUNCTIONS ---
+    function goToDailyExpensePage() {
+        document.getElementById('page1').style.display = 'none';
+        document.getElementById('page2').style.display = 'none';
+        document.getElementById('pageHistory').style.display = 'none';
+        document.getElementById('pageDailyExpense').style.display = 'block';
+
+        if (!document.getElementById('dailyExpenseDate').value) {
+            document.getElementById('dailyExpenseDate').valueAsDate = new Date();
+        }
+
+        let rawRate = parseFloat(document.getElementById('exchangeRate').value) || 780;
+        document.getElementById('dailyRateDisplay').innerText = rawRate;
+
+        calculateDailyExpenseTotal();
+    }
+
+    function addExpenseRow() {
+        let container = document.getElementById('expenseRowsContainer');
+        let div = document.createElement('div');
+        div.className = 'expense-row';
+        div.innerHTML = `
+            <input type="text" class="expense-note" placeholder="မှတ်စု (ဥပမာ- သွားလာစရိတ်)">
+            <input type="number" class="expense-amount" placeholder="Baht" oninput="calculateDailyExpenseTotal()">
+            <button class="btn-remove-row" onclick="removeExpenseRow(this)"></button>
+        `;
+        container.appendChild(div);
+    }
+
+    function removeExpenseRow(btn) {
+        btn.parentElement.remove();
+        calculateDailyExpenseTotal();
+    }
+
+    function calculateDailyExpenseTotal() {
+        let amounts = document.querySelectorAll('.expense-amount');
+        let totalThb = 0;
+        amounts.forEach(input => {
+            totalThb += parseFloat(input.value) || 0;
+        });
+
+        let rate = getRate();
+        let totalMmk = Math.round(totalThb * rate);
+
+        document.getElementById('dailyTotalThb').innerText = totalThb.toLocaleString();
+        document.getElementById('dailyTotalMmk').innerText = totalMmk.toLocaleString();
+
+        return { totalThb, totalMmk };
+    }
+
+    function saveDailyExpenseRecord() {
+        if (!currentUser) return;
+
+        let dateVal = document.getElementById('dailyExpenseDate').value;
+        if (!dateVal) {
+            alert('ကျေးဇူးပြု၍ ရက်စွဲ ရွေးချယ်ပါခင်ဗျာ။');
+            return;
+        }
+
+        let notes = document.querySelectorAll('.expense-note');
+        let amounts = document.querySelectorAll('.expense-amount');
+
+        let details = [];
+        for (let i = 0; i < notes.length; i++) {
+            let noteStr = notes[i].value.trim();
+            let amtVal = parseFloat(amounts[i].value) || 0;
+            if (noteStr || amtVal > 0) {
+                details.push({ note: noteStr || '-', amount: amtVal });
+            }
+        }
+
+        if (details.length === 0) {
+            alert('အနည်းဆုံး မှတ်စုတစ်ကြောင်း ရိုက်ထည့်ပါခင်ဗျာ။');
+            return;
+        }
+
+        let totals = calculateDailyExpenseTotal();
+        let rawRate = parseFloat(document.getElementById('exchangeRate').value) || 780;
+
+        let rec = {
+            username: currentUser.name,
+            type: 'daily_expense',
+            date: dateVal,
+            details: details,
+            totalThb: totals.totalThb,
+            totalMmk: totals.totalMmk,
+            rate: rawRate
+        };
+
+        db.ref('daily_expenses').push().set(rec, err => {
+            if (err) {
+                alert('သိမ်းဆည်းမှု မအောင်မြင်ပါ: ' + err.message);
+            } else {
+                alert('တနေ့တာ အသုံးစရိတ်ကို အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီခင်ဗျာ။');
+                // Reset inputs
+                document.getElementById('expenseRowsContainer').innerHTML = `
+                    <div class="expense-row">
+                        <input type="text" class="expense-note" placeholder="မှတ်စု (ဥပမာ- ထမင်းဖိုး)">
+                        <input type="number" class="expense-amount" placeholder="Baht" oninput="calculateDailyExpenseTotal()">
+                    </div>
+                `;
+                calculateDailyExpenseTotal();
+                goToHistoryPage();
+            }
+        });
+    }
+
+    // --- SAVE SALARY RECORD ---
     function saveRecord() {
         if (!currentUser) return;
 
@@ -663,6 +834,7 @@
 
         let rec = {
             username: currentUser.name,
+            type: 'salary',
             yearMonth: year + ' ' + monthStr,
             empTypeStr: empTypeStr,
             dailyRate: dailyRate,
@@ -689,10 +861,29 @@
         });
     }
 
+    // --- HISTORY FUNCTIONS ---
+    function switchHistoryTab(tab) {
+        currentHistoryTab = tab;
+        if (tab === 'salary') {
+            document.getElementById('tabSalaryHistBtn').classList.add('active');
+            document.getElementById('tabDailyHistBtn').classList.remove('active');
+        } else {
+            document.getElementById('tabDailyHistBtn').classList.add('active');
+            document.getElementById('tabSalaryHistBtn').classList.remove('active');
+        }
+        renderHistoryList();
+    }
+
     function goToHistoryPage() {
+        document.getElementById('page1').style.display = 'none';
         document.getElementById('page2').style.display = 'none';
+        document.getElementById('pageDailyExpense').style.display = 'none';
         document.getElementById('pageHistory').style.display = 'block';
 
+        renderHistoryList();
+    }
+
+    function renderHistoryList() {
         let container = document.getElementById('historyListContainer');
         container.innerHTML = '<p style="text-align:center; color:#888;">အချက်အလက်များ ဆွဲယူနေပါသည်...</p>';
 
@@ -711,7 +902,9 @@
     }
 
     function loadUserHistoryView(container) {
-        db.ref('records').once('value', snapshot => {
+        let dbPath = (currentHistoryTab === 'salary') ? 'records' : 'daily_expenses';
+
+        db.ref(dbPath).once('value', snapshot => {
             container.innerHTML = '';
             let recordsObj = snapshot.val();
             if (!recordsObj) {
@@ -724,7 +917,11 @@
                 let r = recordsObj[key];
                 if (r.username === currentUser.name) {
                     count++;
-                    container.appendChild(renderHistoryCard(key, r, false));
+                    if (currentHistoryTab === 'salary') {
+                        container.appendChild(renderSalaryCard(key, r, false));
+                    } else {
+                        container.appendChild(renderDailyCard(key, r, false));
+                    }
                 }
             });
 
@@ -737,7 +934,9 @@
     function loadAdminHistoryView(container) {
         db.ref('users').once('value', userSnap => {
             let usersObj = userSnap.val() || {};
-            db.ref('records').once('value', recSnap => {
+            let dbPath = (currentHistoryTab === 'salary') ? 'records' : 'daily_expenses';
+
+            db.ref(dbPath).once('value', recSnap => {
                 container.innerHTML = '';
                 let recordsObj = recSnap.val() || {};
 
@@ -757,7 +956,7 @@
                     accDiv.innerHTML = `
                         <div class="user-accordion-header" onclick="toggleAccordion('${uName}')">
                             <span> ${uName} ${usersObj[uName].role === 'admin' ? '(Admin)' : ''}</span>
-                            <span style="font-size:12px;">(စာရင်း ${userRecs.length} ခု) </span>
+                            <span style="font-size:12px;">(${currentHistoryTab === 'salary' ? 'လစာ' : 'တနေ့တာ'} ${userRecs.length} ခု) </span>
                         </div>
                         <div class="user-accordion-body" id="acc_body_${uName}">
                             <div class="user-info-banner"> Password: <u>${userPass}</u></div>
@@ -774,7 +973,11 @@
                         bodyDiv.appendChild(emptyMsg);
                     } else {
                         userRecs.forEach(item => {
-                            bodyDiv.appendChild(renderHistoryCard(item.key, item.data, true));
+                            if (currentHistoryTab === 'salary') {
+                                bodyDiv.appendChild(renderSalaryCard(item.key, item.data, true));
+                            } else {
+                                bodyDiv.appendChild(renderDailyCard(item.key, item.data, true));
+                            }
                         });
                     }
                 });
@@ -791,7 +994,7 @@
         }
     }
 
-    function renderHistoryCard(key, r, isAdmin) {
+    function renderSalaryCard(key, r, isAdmin) {
         let item = document.createElement('div');
         item.className = 'history-item';
 
@@ -799,14 +1002,14 @@
         if (isAdmin) {
             adminBtns = `
                 <div>
-                    <button class="btn-warning" onclick="editRecord('${key}')">Edit</button>
-                    <button class="btn-danger" onclick="deleteRecord('${key}')">Delete</button>
+                    <button class="btn-warning" onclick="editSalaryRecord('${key}')">Edit</button>
+                    <button class="btn-danger" onclick="deleteRecord('records', '${key}')">Delete</button>
                 </div>
             `;
         }
 
         item.innerHTML = `
-            <h4> ${r.yearMonth || 'စာရင်း'} (${r.date}) ${adminBtns}</h4>
+            <h4> ${r.yearMonth || 'လစာမှတ်တမ်း'} (${r.date}) ${adminBtns}</h4>
             <div><b>အမျိုးအစား:</b> ${r.empTypeStr || 'လခစား'}</div>
             <div><b>တစ်ရက် လုပ်အားခ:</b> ${r.dailyRate} </div>
             <div><b>OT နာရီ:</b> ${r.otHours || 0} hr | <b>ရက်မှန်ကြေး:</b> ${r.attendance || 0} </div>
@@ -824,16 +1027,47 @@
         return item;
     }
 
-    function deleteRecord(key) {
+    function renderDailyCard(key, r, isAdmin) {
+        let item = document.createElement('div');
+        item.className = 'history-item';
+
+        let adminBtns = '';
+        if (isAdmin) {
+            adminBtns = `
+                <div>
+                    <button class="btn-danger" onclick="deleteRecord('daily_expenses', '${key}')">Delete</button>
+                </div>
+            `;
+        }
+
+        let detailHtml = '';
+        if (r.details && Array.isArray(r.details)) {
+            r.details.forEach(d => {
+                detailHtml += `<div> ${d.note}: <b>${d.amount} </b></div>`;
+            });
+        }
+
+        item.innerHTML = `
+            <h4> ${r.date} ${adminBtns}</h4>
+            <div style="margin-bottom:6px;">${detailHtml}</div>
+            <hr style="border:0; border-top:1px dashed #eee; margin:6px 0;">
+            <div><b>စုစုပေါင်း သုံးစရိတ်:</b> <span style="color:#dc3545; font-weight:bold;">${r.totalThb.toLocaleString()} </span></div>
+            <div style="font-size:12px; color:#28a745; font-weight:bold;">(= ${r.totalMmk ? r.totalMmk.toLocaleString() : 0} ကျပ်)</div>
+            <div style="font-size:11px; color:#888;">(ပေါက်ဈေး ၁ သိန်း = ${r.rate || 780} )</div>
+        `;
+        return item;
+    }
+
+    function deleteRecord(path, key) {
         if (confirm('ဒီစာရင်းကို ဖျက်ရန် သေချာပါသလား?')) {
-            db.ref('records/' + key).remove(err => {
+            db.ref(path + '/' + key).remove(err => {
                 if (err) alert('ဖျက်ခြင်း မအောင်မြင်ပါ: ' + err.message);
-                else goToHistoryPage();
+                else renderHistoryList();
             });
         }
     }
 
-    function editRecord(key) {
+    function editSalaryRecord(key) {
         db.ref('records/' + key).once('value', snapshot => {
             let rec = snapshot.val();
             if (!rec) return;
@@ -851,7 +1085,7 @@
                 if (err) alert('ပြင်ဆင်မှု မအောင်မြင်ပါ: ' + err.message);
                 else {
                     alert('စာရင်း ပြင်ဆင်ပြီးပါပြီ။');
-                    goToHistoryPage();
+                    renderHistoryList();
                 }
             });
         });
